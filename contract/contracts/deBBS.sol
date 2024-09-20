@@ -42,7 +42,7 @@ contract deBBS {
     function createBoard(string memory boardTitle) public payable {
         require(msg.value == createBoardFee, "You should pay correct fee to create a board.");
         
-        uint256 boardId = boards.length + 1;
+        uint256 boardId = boards.length;
 
         boards.push(Board({
             boardId: boardId,
@@ -55,7 +55,7 @@ contract deBBS {
     function createThread(string memory threadTitle) public payable {
         require(msg.value == createThreadFee, "You should pay correct fee to create a thread");
 
-        uint256 threadId = threads.length + 1;
+        uint256 threadId = threads.length;
 
         threads.push(Thread({
             threadId: threadId,
@@ -68,7 +68,7 @@ contract deBBS {
     function createPost(string memory postContent) public payable {
         require(msg.value == createPostFee, "You should pay correct fee to create a post");
 
-        uint256 postId = posts.length + 1;
+        uint256 postId = posts.length;
 
         posts.push(Post({
             postId: postId,
