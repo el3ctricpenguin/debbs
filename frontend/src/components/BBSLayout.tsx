@@ -2,6 +2,7 @@ import { Box, HStack, Heading, Spacer } from "@chakra-ui/react";
 import { ReactElement } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
+import shortenAddress from "@/utils/shortenAddress";
 
 export default function BBSLayout({ children }: { children: ReactElement }) {
     const { address, isConnected } = useAccount();
@@ -30,7 +31,7 @@ export default function BBSLayout({ children }: { children: ReactElement }) {
                     <BBSHeadingButton
                         buttonProps={{ onClick: !isConnected ? () => connect({ connector: connectors[0] }) : () => disconnect() }}
                     >
-                        {isConnected && address ? address : "Connect Wallet"}
+                        {isConnected && address ? shortenAddress(address) : "Connect Wallet"}
                     </BBSHeadingButton>
                 </HStack>
                 <Box border="2px solid #fff" borderRadius={10} padding={5}>
