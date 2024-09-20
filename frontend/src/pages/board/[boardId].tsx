@@ -1,6 +1,6 @@
 import { BBSHeading } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { FormControl, Link, Text } from "@chakra-ui/react";
+import { Link, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import Table from "cli-table3";
@@ -81,7 +81,7 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <BBSLayout>
+            <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
                     <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Create A Thread</BBSHeading>
 

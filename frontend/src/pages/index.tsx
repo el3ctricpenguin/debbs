@@ -4,6 +4,9 @@ import { chakra, Link, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 
+const primaryColor = "#fff";
+const bgColor = "#335CFF";
+
 export default function Home() {
     const boardsResult = [
         { boardTitle: "Ethereum", boardId: 0 },
@@ -59,7 +62,7 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <BBSLayout>
+            <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
                     <BBSHeading headingProps={{ mb: 2 }}>&gt; Boards</BBSHeading>
                     <Text>

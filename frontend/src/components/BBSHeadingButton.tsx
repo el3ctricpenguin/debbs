@@ -1,7 +1,11 @@
+import { ColorsContext } from "@/config/ColorContext";
 import { Button, ButtonProps } from "@chakra-ui/react";
-import { ReactElement } from "react";
+import { ReactElement, useContext } from "react";
 
 export const BBSHeadingButton = ({ children, buttonProps }: { children: string | ReactElement; buttonProps?: ButtonProps }) => {
+    const colors = useContext(ColorsContext);
+    const primaryColor = colors[0];
+    const bgColor = colors[1];
     return (
         <Button
             fontSize={18}
@@ -14,11 +18,11 @@ export const BBSHeadingButton = ({ children, buttonProps }: { children: string |
             lineHeight={5}
             h={30}
             fontWeight={500}
-            color="white"
-            bgColor="#3355FF"
+            color={primaryColor}
+            bgColor={bgColor}
             borderRadius={0}
-            _hover={{ color: "#3355FF", bgColor: "white" }}
-            _active={{ color: "#3355FF", bgColor: "white" }}
+            _hover={{ color: bgColor, bgColor: primaryColor }}
+            _active={{ color: bgColor, bgColor: primaryColor }}
             {...buttonProps}
         >
             {children}
