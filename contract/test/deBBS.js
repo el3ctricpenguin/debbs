@@ -84,15 +84,20 @@ describe("deBBS Tests", function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee })
-            ).to.changeEtherBalances(
-                [addr1, owner, frontendOwner, deBBS],
-                [threadCreationFee * -1n, threadCreationFee / 2n, threadCreationFee / 4n, threadCreationFee / 4n]
-            );
+        ).to.changeEtherBalances(
+          [addr1, owner, frontendOwner, deBBS],
+          [threadCreationFee * -1n, threadCreationFee / 2n, threadCreationFee / 4n, threadCreationFee / 4n]
+        );
     });
 
     it("Should not distribute fee to create a thread to the frontendOwner if the address is zero", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
+      await expect(deBBS.connect(addr1).createThread(0, threadTitle, ethers.ZeroAddress, { value: threadCreationFee })
+        ).to.changeEtherBalances(
+          [addr1, owner, frontendOwner, deBBS],
+          [threadCreationFee * -1n, threadCreationFee / 2n, 0n, threadCreationFee / 2n]
+        );
     });
   });
 
