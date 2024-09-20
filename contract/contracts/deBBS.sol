@@ -39,7 +39,7 @@ contract deBBS {
         createPostFee = 0.0001 ether;
     }
 
-    function createBoard(string memory boardTitle) public payable {
+    function createBoard(string memory boardTitle, address frontendOwnerAddress) public payable {
         require(msg.value == createBoardFee, "You should pay correct fee to create a board.");
         
         uint256 boardId = boards.length;
@@ -50,9 +50,12 @@ contract deBBS {
             boardTitle: boardTitle,
             timestamp: block.timestamp
         }));
+
+        _sendCreateBoardFeeToFrontendOwner(frontendOwnerAddress);
+
     }
 
-    function createThread(string memory threadTitle) public payable {
+    function createThread(string memory threadTitle, address frontendOwnerAddress) public payable {
         require(msg.value == createThreadFee, "You should pay correct fee to create a thread.");
 
         uint256 threadId = threads.length;
@@ -65,7 +68,7 @@ contract deBBS {
         }));
     }
 
-    function createPost(string memory postContent) public payable {
+    function createPost(string memory postContent, address frontendOwnerAddress) public payable {
         require(msg.value == createPostFee, "You should pay correct fee to create a post.");
 
         uint256 postId = posts.length;
@@ -77,6 +80,19 @@ contract deBBS {
             timestamp: block.timestamp
         }));
     }
+
+    function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {
+        require(createBoardFee <= address(this).balance, "The amount to distribute is not enough.");
+
+        if (_frontendOwnerAddress != address(0)) {
+            address payable frontendOwnerAddress = payable(_frontendOwnerAddress);
+            frontendOwnerAddress.transfer(createBoardFee / 4);
+        }
+    }
+
+    //-------------------------
+    //     view functions
+    //-------------------------
 
     function getBoard(uint256 boardId) public view returns (
         uint256,
