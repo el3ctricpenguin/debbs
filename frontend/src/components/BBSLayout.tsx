@@ -3,6 +3,7 @@ import { ReactElement } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
 import shortenAddress from "@/utils/shortenAddress";
+import NextLink from "next/link";
 
 export default function BBSLayout({ children }: { children: ReactElement }) {
     const { address, isConnected } = useAccount();
@@ -23,6 +24,8 @@ export default function BBSLayout({ children }: { children: ReactElement }) {
                         pb={1}
                         lineHeight={5}
                         h={30}
+                        as={NextLink}
+                        href="/"
                     >
                         &gt;&gt;deBBS
                     </Heading>
