@@ -1,14 +1,10 @@
 import { BBSHeading } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { Button, chakra, Link, Text } from "@chakra-ui/react";
+import { chakra, Link, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
-import { useAccount, useDisconnect } from "wagmi";
 
 export default function Home() {
-    const { address } = useAccount();
-    const { disconnect } = useDisconnect();
-
     const boardsResult = [
         { boardTitle: "Ethereum", boardId: 0 },
         { boardTitle: "DeFi", boardId: 0 },
@@ -102,9 +98,6 @@ export default function Home() {
                             </Link>
                         </Text>
                     ))}
-
-                    <Button onClick={() => disconnect()}>Disconnect</Button>
-                    <Text>{address}</Text>
                 </>
             </BBSLayout>
         </>

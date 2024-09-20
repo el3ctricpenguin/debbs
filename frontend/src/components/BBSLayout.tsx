@@ -1,11 +1,12 @@
 import { Box, HStack, Heading, Spacer } from "@chakra-ui/react";
 import { ReactElement } from "react";
-import { BBSHeading } from "./BBSHeading";
-import { useConnect } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
 
 export default function BBSLayout({ children }: { children: ReactElement }) {
+    const { address, isConnected } = useAccount();
     const { connect, connectors } = useConnect();
+    const { disconnect } = useDisconnect();
     return (
         <Box bgColor="#3355FF" color="white" w="full" h="full">
             <Box w={960} margin="0 auto" pt={16}>
@@ -26,8 +27,10 @@ export default function BBSLayout({ children }: { children: ReactElement }) {
                     </Heading>
                     <Spacer />
                     <BBSHeadingButton>Ethereum Network</BBSHeadingButton>
-                    <BBSHeadingButton buttonProps={{ onClick: () => connect({ connector: connectors[0] }) }}>
-                        Connect Wallet
+                    <BBSHeadingButton
+                        buttonProps={{ onClick: !isConnected ? () => connect({ connector: connectors[0] }) : () => disconnect() }}
+                    >
+                        {isConnected && address ? address : "Connect Wallet"}
                     </BBSHeadingButton>
                 </HStack>
                 <Box border="2px solid #fff" borderRadius={10} padding={5}>
