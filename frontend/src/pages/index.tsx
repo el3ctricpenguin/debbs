@@ -1,12 +1,23 @@
 import { BBSHeading } from "@/components/BBSHeading";
-import { Box, Button, chakra, Heading, HStack, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, chakra, Heading, HStack, Link, Spacer, Text } from "@chakra-ui/react";
 import Head from "next/head";
+import NextLink from "next/link";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 
 export default function Home() {
     const { address } = useAccount();
     const { connect, connectors } = useConnect();
     const { disconnect } = useDisconnect();
+
+    const boardsResult = [
+        { boardTitle: "Ethereum", boardId: 0 },
+        { boardTitle: "DeFi", boardId: 0 },
+        { boardTitle: "Trading", boardId: 0 },
+        { boardTitle: "NFT", boardId: 0 },
+        { boardTitle: "Prediction Market", boardId: 0 },
+        { boardTitle: "GameFi", boardId: 0 },
+        { boardTitle: "Wallet Security", boardId: 0 },
+    ];
 
     const Hr = chakra("hr");
     return (
@@ -18,7 +29,7 @@ export default function Home() {
             </Head>
             <Box bgColor="#3355FF" color="white" w="full" h="full">
                 <Box w={960} margin="0 auto" pt={16}>
-                    <HStack mb={2} px={2}>
+                    <HStack mb={3} px={2}>
                         <Heading
                             fontSize={24}
                             fontStyle="italic"
@@ -38,7 +49,13 @@ export default function Home() {
                     </HStack>
                     <Box border="2px solid #fff" borderRadius={10} padding={5}>
                         <BBSHeading headingProps={{ mb: 2 }}>&gt; Boards</BBSHeading>
-                        <Text>Ethereum / DeFi / Trading / NFT / Prediction Market / GameFi / Wallet Security</Text>
+                        <Text>
+                            {boardsResult.map((board, i) => (
+                                <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
+                                    {(i == 0 ? "" : " / ") + board.boardTitle}
+                                </Link>
+                            ))}
+                        </Text>
                         <Text>[See More]</Text>
                         <Hr borderStyle="dashed" my={2} />
 
