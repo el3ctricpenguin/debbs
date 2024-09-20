@@ -12,6 +12,7 @@ export const BBSHeading = ({ children, headingProps }: { children: string | Reac
             pt={1}
             pb={0.5}
             lineHeight={5}
+            h={30}
             fontWeight={500}
             {...headingProps}
         >
