@@ -120,6 +120,30 @@ describe("deBBS Tests", function () {
         .to.be.revertedWith("You should pay correct fee to create a post.");
     });
 
+    it("Should distribute fee to create a post to the frontendOwner if provided", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      
+      //boardOwner = owner, threadOwner = addr1
+      await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
+      await expect(deBBS.connect(addr2).createPost(1, postTitle, frontendOwner.address, { value: postCreationFee })
+        ).to.changeEtherBalances(
+          [addr2, owner, addr1, frontendOwner, deBBS],
+          [postCreationFee * -1n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n]
+        );
+    });
+
+    it("Should not distribute fee to create a thread to the frontendOwner if the address is zero", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      //boardOwner = owner, threadOwner = addr1
+      await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
+      await expect(deBBS.connect(addr2).createPost(1, postTitle, ethers.ZeroAddress, { value: postCreationFee })
+        ).to.changeEtherBalances(
+          [addr2, owner, addr1, frontendOwner, deBBS],
+          [postCreationFee * -1n, postCreationFee / 4n, postCreationFee / 4n, 0n, postCreationFee / 2n]
+        );
+    });
+
   });
 
 });
