@@ -19,6 +19,21 @@ export default function Home() {
         { boardTitle: "Wallet Security", boardId: 0 },
     ];
 
+    const recentThreadsResult = [
+        {
+            account: "great-security.eth",
+            threadDescription: "I made a special anti-fraud wallet, Pizza Wallet.",
+        },
+        {
+            account: "0xd3ef...ad823",
+            threadDescription: "Where can I get WBTC at better price?",
+        },
+        {
+            account: "house-boy.eth",
+            threadDescription: "I’m crypto bilionaire living with my mom",
+        },
+    ];
+
     const Hr = chakra("hr");
     return (
         <>
@@ -60,9 +75,11 @@ export default function Home() {
                         <Hr borderStyle="dashed" my={2} />
 
                         <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Threads</BBSHeading>
-                        <Text>[great-security.eth] I made a special anti-fraud wallet, Pizza Wallet.</Text>
-                        <Text>[0xd3ef...ad823] Where can I get WBTC at better price?</Text>
-                        <Text>[house-boy.eth] I’m crypto bilionaire living with my mom</Text>
+                        {recentThreadsResult.map((thread, i) => (
+                            <Text key={i}>
+                                [{thread.account}] {thread.threadDescription}
+                            </Text>
+                        ))}
 
                         <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                         <Text>[sbf.eth] I’ll buy as much as ETH has you have...</Text>
