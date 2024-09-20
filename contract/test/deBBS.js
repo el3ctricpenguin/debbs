@@ -17,12 +17,12 @@ describe("deBBS Tests", function () {
     await deBBS.connect(addr1).createBoard("Test board 1", frontendOwner.address, { value: boardCreationFee });
     await deBBS.connect(addr1).createBoard("Test board 2", frontendOwner.address, { value: boardCreationFee });
     await deBBS.connect(addr1).createBoard("Test board 3", frontendOwner.address, { value: boardCreationFee });
-    await deBBS.connect(addr1).createThread("Test thread 1", frontendOwner.address, { value: threadCreationFee });
-    await deBBS.connect(addr1).createThread("Test thread 2", frontendOwner.address, { value: threadCreationFee });
-    await deBBS.connect(addr1).createThread("Test thread 3", frontendOwner.address, { value: threadCreationFee });
-    await deBBS.connect(addr1).createPost("Test post 1", frontendOwner.address, { value: postCreationFee });
-    await deBBS.connect(addr1).createPost("Test post 2", frontendOwner.address, { value: postCreationFee });
-    await deBBS.connect(addr1).createPost("Test post 3", frontendOwner.address, { value: postCreationFee });
+    await deBBS.connect(addr1).createThread(0, "Test thread 1", frontendOwner.address, { value: threadCreationFee });
+    await deBBS.connect(addr1).createThread(0, "Test thread 2", frontendOwner.address, { value: threadCreationFee });
+    await deBBS.connect(addr1).createThread(0, "Test thread 3", frontendOwner.address, { value: threadCreationFee });
+    await deBBS.connect(addr1).createPost(0, "Test post 1", frontendOwner.address, { value: postCreationFee });
+    await deBBS.connect(addr1).createPost(0, "Test post 2", frontendOwner.address, { value: postCreationFee });
+    await deBBS.connect(addr1).createPost(0, "Test post 3", frontendOwner.address, { value: postCreationFee });
 
     return { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee };
   }
@@ -71,7 +71,7 @@ describe("deBBS Tests", function () {
     it("Should create a thread with correct fee and correct data", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      await deBBS.connect(addr1).createThread(threadTitle, frontendOwner.address, { value: threadCreationFee });
+      await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
 
       const thread = await deBBS.getThread(3);
       expect(thread[1]).to.equal(addr1.address);
@@ -82,7 +82,7 @@ describe("deBBS Tests", function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       const incorrectThreadCreationFee = ethers.parseEther("0.002");
-      await expect(deBBS.connect(addr1).createThread(threadTitle, frontendOwner.address, { value: incorrectThreadCreationFee }))
+      await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: incorrectThreadCreationFee }))
         .to.be.revertedWith("You should pay correct fee to create a thread.");
     });
   });
@@ -91,7 +91,7 @@ describe("deBBS Tests", function () {
     it("Should create a post with correct fee and correct data", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      await deBBS.connect(addr1).createPost(postTitle, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: postCreationFee });
 
       const post = await deBBS.getPost(3);
       expect(post[1]).to.equal(addr1.address);
@@ -102,7 +102,7 @@ describe("deBBS Tests", function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       const incorrectPostCreationFee = ethers.parseEther("0.0002");
-      await expect(deBBS.connect(addr1).createPost(postTitle, frontendOwner.address, { value: incorrectPostCreationFee }))
+      await expect(deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: incorrectPostCreationFee }))
         .to.be.revertedWith("You should pay correct fee to create a post.");
     });
 
