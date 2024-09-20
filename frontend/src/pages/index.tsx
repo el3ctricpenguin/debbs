@@ -21,14 +21,17 @@ export default function Home() {
 
     const recentThreadsResult = [
         {
+            threadId: 0,
             account: "great-security.eth",
             threadDescription: "I made a special anti-fraud wallet, Pizza Wallet.",
         },
         {
+            threadId: 0,
             account: "0xd3ef...ad823",
             threadDescription: "Where can I get WBTC at better price?",
         },
         {
+            threadId: 0,
             account: "house-boy.eth",
             threadDescription: "I’m crypto bilionaire living with my mom",
         },
@@ -36,16 +39,19 @@ export default function Home() {
 
     const recentPostsResult = [
         {
+            postId: 0,
             account: "sbf.eth",
-            threadDescription: "I’ll buy as much as ETH has you have...",
+            postContent: "I’ll buy as much as ETH has you have...",
         },
         {
+            postId: 0,
             account: "0x92da1...2ed3a",
-            threadDescription: "Ethereum is so dead!!",
+            postContent: "Ethereum is so dead!!",
         },
         {
+            postId: 0,
             account: "house-boy.eth",
-            threadDescription: "I made 200k buying vegetable tokens last year",
+            postContent: "I made 200k buying vegetable tokens last year",
         },
     ];
 
@@ -95,14 +101,24 @@ export default function Home() {
                         <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Threads</BBSHeading>
                         {recentThreadsResult.map((thread, i) => (
                             <Text key={i}>
-                                [{thread.account}] {thread.threadDescription}
+                                <Link as={NextLink} href={`/account/${thread.account}`}>
+                                    [{thread.account}]
+                                </Link>{" "}
+                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
+                                    {thread.threadDescription}
+                                </Link>
                             </Text>
                         ))}
 
                         <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                         {recentPostsResult.map((post, i) => (
                             <Text key={i}>
-                                [{post.account}] {post.threadDescription}
+                                <Link as={NextLink} href={`/account/${post.account}`}>
+                                    [{post.account}]
+                                </Link>{" "}
+                                <Link as={NextLink} href={`/post/${post.postId}`}>
+                                    {post.postContent}
+                                </Link>
                             </Text>
                         ))}
 
