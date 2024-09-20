@@ -15,9 +15,19 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box bgColor="#3355FF" color="white" w="full" h="full">
-                <Box w={900} margin="0 auto">
-                    <HStack>
-                        <Heading fontSize={24} fontStyle="italic">
+                <Box w={960} margin="0 auto" pt={16}>
+                    <HStack mb={2} px={2}>
+                        <Heading
+                            fontSize={24}
+                            fontStyle="italic"
+                            bgColor="white"
+                            color="#3355FF"
+                            pl={3}
+                            pr={4}
+                            pt={1.5}
+                            pb={1}
+                            lineHeight={5}
+                        >
                             &gt;&gt;deBBS
                         </Heading>
                         <Spacer />
