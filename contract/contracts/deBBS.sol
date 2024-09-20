@@ -14,6 +14,7 @@ contract deBBS {
 
     struct Thread {
         uint256 threadId;
+        uint256 parentBoardId;
         address threadOwner;
         string threadTitle;
         uint256 timestamp;
@@ -21,6 +22,7 @@ contract deBBS {
 
     struct Post {
         uint256 postId;
+        uint256 parentThreadId;
         address postOwner;
         string postContent;
         uint256 timestamp;
@@ -33,13 +35,16 @@ contract deBBS {
     uint256 public createThreadFee;
     uint256 public createPostFee;
 
+    mapping(uint256 => uint256[]) public boardToThreads; 
+    mapping(uint256 => uint256[]) public threadToPosts; 
+
     constructor() {
         createBoardFee = 0.01 ether;
         createThreadFee = 0.001 ether;
         createPostFee = 0.0001 ether;
     }
 
-    function createBoard(string memory boardTitle) public payable {
+    function createBoard(string memory boardTitle, address frontendOwnerAddress) public payable {
         require(msg.value == createBoardFee, "You should pay correct fee to create a board.");
         
         uint256 boardId = boards.length;
@@ -50,33 +55,85 @@ contract deBBS {
             boardTitle: boardTitle,
             timestamp: block.timestamp
         }));
+
+        _sendCreateBoardFeeToFrontendOwner(frontendOwnerAddress);
+
     }
 
-    function createThread(string memory threadTitle) public payable {
+    function createThread(uint256 boardId, string memory threadTitle, address frontendOwnerAddress) public payable {
         require(msg.value == createThreadFee, "You should pay correct fee to create a thread.");
 
         uint256 threadId = threads.length;
 
         threads.push(Thread({
             threadId: threadId,
+            parentBoardId: boardId,
             threadOwner: msg.sender,
             threadTitle: threadTitle,
             timestamp: block.timestamp
         }));
+
+        boardToThreads[boardId].push(threadId);
+        _sendCreateThreadFeeToBoardOwner(boardId, frontendOwnerAddress);
     }
 
-    function createPost(string memory postContent) public payable {
+    function createPost(uint256 threadId, string memory postContent, address frontendOwnerAddress) public payable {
         require(msg.value == createPostFee, "You should pay correct fee to create a post.");
 
         uint256 postId = posts.length;
 
         posts.push(Post({
             postId: postId,
+            parentThreadId: threadId,
             postOwner: msg.sender,
             postContent: postContent,
             timestamp: block.timestamp
         }));
+
+        threadToPosts[threadId].push(postId);
+        _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
     }
+
+    function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {
+        require(createBoardFee <= address(this).balance, "The amount to distribute is not enough.");
+
+        if (_frontendOwnerAddress != address(0)) {
+            address payable frontendOwnerAddress = payable(_frontendOwnerAddress);
+            frontendOwnerAddress.transfer(createBoardFee / 4);
+        }
+    }
+
+    function _sendCreateThreadFeeToBoardOwner(uint256 _boardId, address _frontendOwnerAddress) private {
+        require(createThreadFee <= address(this).balance, "The amount to distribute is not enough.");
+
+        address payable boardOwnerAddress = payable(boards[_boardId].boardOwner);
+        boardOwnerAddress.transfer(createThreadFee / 2);
+
+        if (_frontendOwnerAddress != address(0)) {
+            address payable frontendOwnerAddress = payable(_frontendOwnerAddress);
+            frontendOwnerAddress.transfer(createThreadFee / 4);
+        }
+    }
+
+    function _sendCreatePostFeeToThreadOwnerAndBoardOwner(uint256 _threadId, address _frontendOwnerAddress) private {
+        require(createPostFee <= address(this).balance, "The amount to distribute is not enough.");
+
+        uint256 parentBoardId = threads[_threadId].parentBoardId;
+        address payable boardOwnerAddress = payable(boards[parentBoardId].boardOwner);
+        boardOwnerAddress.transfer(createPostFee / 4);
+
+        address payable threadOwnerAddress = payable(threads[_threadId].threadOwner);
+        threadOwnerAddress.transfer(createPostFee / 4);
+
+        if (_frontendOwnerAddress != address(0)) {
+            address payable frontendOwnerAddress = payable(_frontendOwnerAddress);
+            frontendOwnerAddress.transfer(createPostFee / 4);
+        }
+    }
+
+    //-------------------------
+    //     view functions
+    //-------------------------
 
     function getBoard(uint256 boardId) public view returns (
         uint256,
