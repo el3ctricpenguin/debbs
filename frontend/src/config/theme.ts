@@ -8,7 +8,7 @@ const createTheme = () =>
         },
         styles: {
             global: {
-                body: {},
+                body: { bgColor: "#3355FF" },
             },
         },
         components: {},
