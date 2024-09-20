@@ -71,6 +71,7 @@ contract deBBS {
         }));
 
         boardToThreads[boardId].push(threadId);
+        _sendCreateThreadFeeToBoardOwner(boardId, frontendOwnerAddress);
     }
 
     function createPost(uint256 threadId, string memory postContent, address frontendOwnerAddress) public payable {
@@ -94,6 +95,18 @@ contract deBBS {
         if (_frontendOwnerAddress != address(0)) {
             address payable frontendOwnerAddress = payable(_frontendOwnerAddress);
             frontendOwnerAddress.transfer(createBoardFee / 4);
+        }
+    }
+
+    function _sendCreateThreadFeeToBoardOwner(uint256 _boardId, address _frontendOwnerAddress) private {
+        require(createThreadFee <= address(this).balance, "The amount to distribute is not enough.");
+
+        address payable boardOwnerAddress = payable(boards[_boardId].boardOwner);
+            boardOwnerAddress.transfer(createThreadFee / 2);
+
+        if (_frontendOwnerAddress != address(0)) {
+            address payable frontendOwnerAddress = payable(_frontendOwnerAddress);
+            frontendOwnerAddress.transfer(createThreadFee / 4);
         }
     }
 

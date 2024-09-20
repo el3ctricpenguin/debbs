@@ -14,15 +14,9 @@ describe("deBBS Tests", function () {
     const threadCreationFee = ethers.parseEther("0.001");
     const postCreationFee = ethers.parseEther("0.0001");
 
-    await deBBS.connect(addr1).createBoard("Test board 1", frontendOwner.address, { value: boardCreationFee });
-    await deBBS.connect(addr1).createBoard("Test board 2", frontendOwner.address, { value: boardCreationFee });
-    await deBBS.connect(addr1).createBoard("Test board 3", frontendOwner.address, { value: boardCreationFee });
-    await deBBS.connect(addr1).createThread(0, "Test thread 1", frontendOwner.address, { value: threadCreationFee });
-    await deBBS.connect(addr1).createThread(0, "Test thread 2", frontendOwner.address, { value: threadCreationFee });
-    await deBBS.connect(addr1).createThread(0, "Test thread 3", frontendOwner.address, { value: threadCreationFee });
-    await deBBS.connect(addr1).createPost(0, "Test post 1", frontendOwner.address, { value: postCreationFee });
-    await deBBS.connect(addr1).createPost(0, "Test post 2", frontendOwner.address, { value: postCreationFee });
-    await deBBS.connect(addr1).createPost(0, "Test post 3", frontendOwner.address, { value: postCreationFee });
+    await deBBS.connect(owner).createBoard("Test board 1", frontendOwner.address, { value: boardCreationFee });
+    await deBBS.connect(owner).createThread(0, "Test thread 1", frontendOwner.address, { value: threadCreationFee });
+    await deBBS.connect(owner).createPost(0, "Test post 1", frontendOwner.address, { value: postCreationFee });
 
     return { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee };
   }
@@ -33,7 +27,7 @@ describe("deBBS Tests", function () {
 
       await deBBS.connect(addr1).createBoard(boardTitle, frontendOwner.address, { value: boardCreationFee });
 
-      const board = await deBBS.getBoard(3);
+      const board = await deBBS.getBoard(1);
       expect(board[1]).to.equal(addr1.address);
       expect(board[2]).to.equal(boardTitle);
     });
@@ -73,7 +67,7 @@ describe("deBBS Tests", function () {
 
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
 
-      const thread = await deBBS.getThread(3);
+      const thread = await deBBS.getThread(1);
       expect(thread[1]).to.equal(addr1.address);
       expect(thread[2]).to.equal(threadTitle);
     });
@@ -85,6 +79,21 @@ describe("deBBS Tests", function () {
       await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: incorrectThreadCreationFee }))
         .to.be.revertedWith("You should pay correct fee to create a thread.");
     });
+
+    it("Should distribute fee to create a thread to the frontendOwner if provided", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee })
+            ).to.changeEtherBalances(
+                [addr1, owner, frontendOwner, deBBS],
+                [threadCreationFee * -1n, threadCreationFee / 2n, threadCreationFee / 4n, threadCreationFee / 4n]
+            );
+    });
+
+    it("Should not distribute fee to create a thread to the frontendOwner if the address is zero", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+    });
   });
 
   describe("Post Creation Tests", function () {
@@ -93,7 +102,7 @@ describe("deBBS Tests", function () {
 
       await deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: postCreationFee });
 
-      const post = await deBBS.getPost(3);
+      const post = await deBBS.getPost(1);
       expect(post[1]).to.equal(addr1.address);
       expect(post[2]).to.equal(postTitle);
     });
