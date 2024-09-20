@@ -34,7 +34,9 @@ contract deBBS {
     uint256 public createPostFee;
 
     constructor() {
-
+        createBoardFee = 0.01 ether;
+        createThreadFee = 0.001 ether;
+        createPostFee = 0.0001 ether;
     }
 
     function createBoard(string memory boardTitle) public payable {
