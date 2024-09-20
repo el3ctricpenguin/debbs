@@ -1,7 +1,7 @@
-import { Heading } from "@chakra-ui/react";
+import { Heading, HeadingProps } from "@chakra-ui/react";
 import { ReactElement } from "react";
 
-export const BBSHeading = ({ children }: { children: string | ReactElement }) => {
+export const BBSHeading = ({ children, headingProps }: { children: string | ReactElement; headingProps?: HeadingProps }) => {
     return (
         <Heading
             fontSize={18}
@@ -13,6 +13,7 @@ export const BBSHeading = ({ children }: { children: string | ReactElement }) =>
             pb={0.5}
             lineHeight={5}
             fontWeight={500}
+            {...headingProps}
         >
             {children}
         </Heading>
