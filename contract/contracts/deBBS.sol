@@ -33,6 +33,9 @@ contract deBBS {
     uint256 public createThreadFee;
     uint256 public createPostFee;
 
+    mapping(uint256 => uint256[]) public boardToThreads; 
+    mapping(uint256 => uint256[]) public threadToPosts; 
+
     constructor() {
         createBoardFee = 0.01 ether;
         createThreadFee = 0.001 ether;
@@ -55,7 +58,7 @@ contract deBBS {
 
     }
 
-    function createThread(string memory threadTitle, address frontendOwnerAddress) public payable {
+    function createThread(uint256 boardId, string memory threadTitle, address frontendOwnerAddress) public payable {
         require(msg.value == createThreadFee, "You should pay correct fee to create a thread.");
 
         uint256 threadId = threads.length;
@@ -66,9 +69,11 @@ contract deBBS {
             threadTitle: threadTitle,
             timestamp: block.timestamp
         }));
+
+        boardToThreads[boardId].push(threadId);
     }
 
-    function createPost(string memory postContent, address frontendOwnerAddress) public payable {
+    function createPost(uint256 threadId, string memory postContent, address frontendOwnerAddress) public payable {
         require(msg.value == createPostFee, "You should pay correct fee to create a post.");
 
         uint256 postId = posts.length;
@@ -79,6 +84,8 @@ contract deBBS {
             postContent: postContent,
             timestamp: block.timestamp
         }));
+
+        threadToPosts[threadId].push(postId);
     }
 
     function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {
