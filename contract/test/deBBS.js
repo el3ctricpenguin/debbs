@@ -59,6 +59,11 @@ describe("deBBS Tests", function () {
     it("Should not distribute fee to create a board to the frontendOwner if the address is zero", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
+      await expect(deBBS.connect(addr1).createBoard(boardTitle, ethers.ZeroAddress, { value: boardCreationFee })
+            ).to.changeEtherBalances(
+                [addr1, frontendOwner, deBBS],
+                [boardCreationFee * -1n, 0n, boardCreationFee]
+            );
     });
   });
 
