@@ -50,4 +50,31 @@ contract deBBS {
         }));
         
     }
+
+    function createThread(string memory threadTitle) public payable {
+        require(msg.value == createThreadFee, "You should pay correct fee to create a thread");
+
+        uint256 threadId = threads.length + 1;
+
+        threads.push(Thread({
+            threadId: threadId,
+            threadOwner: msg.sender,
+            threadTitle: threadTitle,
+            timestamp: block.timestamp
+        }));
+    }
+
+    function createPost(string memory postContent) public payable {
+        require(msg.value == createPostFee, "You should pay correct fee to create a post");
+
+        uint256 postId = posts.length + 1;
+
+        posts.push(Post({
+            postId: postId,
+            postOwner: msg.sender,
+            postContent: postContent,
+            timestamp: block.timestamp
+        }));
+    }
+
 }
