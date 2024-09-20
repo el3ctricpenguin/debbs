@@ -1,44 +1,57 @@
-const {
-  time,
-  loadFixture,
-} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
+const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-describe("Lock", function () {
-  // We define a fixture to reuse the same setup in every test.
-  // We use loadFixture to run this setup once, snapshot that state,
-  // and reset Hardhat Network to that snapshot in every test.
-  async function deployOneYearLockFixture() {
-    const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-    const ONE_GWEI = 1_000_000_000;
-
-    const lockedAmount = ONE_GWEI;
-    const unlockTime = (await time.latest()) + ONE_YEAR_IN_SECS;
-
-    // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await ethers.getSigners();
-
-    const Lock = await ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-    return { lock, unlockTime, lockedAmount, owner, otherAccount };
+describe("deBBS Tests", function () {
+  async function deployContractFixture() {
+    const [owner, addr1, addr2] = await ethers.getSigners();
+    const deBBS = await ethers.deployContract("deBBS");
+    return { deBBS, owner, addr1, addr2 };
   }
 
-  describe("Deployment", function () {
-    it("Should set the right unlockTime", async function () {
-      const { lock, unlockTime } = await loadFixture(deployOneYearLockFixture);
+  async function deployContractFixture() {
+    const [owner, addr1, addr2] = await ethers.getSigners();
+    const deBBS = await ethers.deployContract("deBBS");
+    await deBBS.connect(addr1).createBoard("Test board 1", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test board 2", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test board 3", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test thread 1", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test thread 2", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test thread 3", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test post 1", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test post 2", { value: boardCreationFee });
+    await deBBS.connect(addr1).createBoard("Test post 3", { value: boardCreationFee });
 
-      expect(await lock.unlockTime()).to.equal(unlockTime);
+    return { deBBS, owner, addr1, addr2 };
+  }
+
+  async function deployContractFixture() {
+    const [owner, addr1, addr2] = await ethers.getSigners();
+    const deBBS = await ethers.deployContract("deBBS");
+    return { deBBS, owner, addr1, addr2 };
+  }
+
+  describe("Board Creation Test", function () {
+    it("Should create a board with correct fee and correct data", async function () {
+      const { deBBS, owner, addr1, addr2 } = await loadFixture(deployContractFixture);
+
+      const boardTitle = "Test Board";
+      const boardCreationFee = ethers.parseEther("0.01");
+
+      await deBBS.connect(addr1).createBoard(boardTitle, { value: boardCreationFee });
+
+      const board = await deBBS.getBoard(1);
+      expect(board[1]).to.equal(addr1.address);
+      expect(board[2]).to.equal(boardTitle);
     });
 
-    it("Should set the right owner", async function () {
+    it("Should check a new board is created with the correct data", async function () {
       const { lock, owner } = await loadFixture(deployOneYearLockFixture);
 
       expect(await lock.owner()).to.equal(owner.address);
     });
 
-    it("Should receive and store the funds to lock", async function () {
+    it("Should revert when incorrect fee is sent for creating a board", async function () {
       const { lock, lockedAmount } = await loadFixture(
         deployOneYearLockFixture
       );
@@ -48,17 +61,9 @@ describe("Lock", function () {
       );
     });
 
-    it("Should fail if the unlockTime is not in the future", async function () {
-      // We don't use the fixture here because we want a different deployment
-      const latestTime = await time.latest();
-      const Lock = await ethers.getContractFactory("Lock");
-      await expect(Lock.deploy(latestTime, { value: 1 })).to.be.revertedWith(
-        "Unlock time should be in the future"
-      );
-    });
   });
 
-  describe("Withdrawals", function () {
+  describe("Thread Creation Tests", function () {
     describe("Validations", function () {
       it("Should revert with the right error if called too soon", async function () {
         const { lock } = await loadFixture(deployOneYearLockFixture);
@@ -94,7 +99,7 @@ describe("Lock", function () {
       });
     });
 
-    describe("Events", function () {
+    describe("Post Creation Tests", function () {
       it("Should emit an event on withdrawals", async function () {
         const { lock, unlockTime, lockedAmount } = await loadFixture(
           deployOneYearLockFixture

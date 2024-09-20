@@ -50,7 +50,6 @@ contract deBBS {
             boardTitle: boardTitle,
             timestamp: block.timestamp
         }));
-        
     }
 
     function createThread(string memory threadTitle) public payable {
@@ -77,6 +76,21 @@ contract deBBS {
             postContent: postContent,
             timestamp: block.timestamp
         }));
+    }
+
+    function getBoard(uint256 boardId) public view returns (
+        uint256,
+        address,
+        string memory,
+        uint256
+    ) {
+        Board memory board = boards[boardId];
+        return (
+            board.boardId,
+            board.boardOwner,
+            board.boardTitle,
+            board.timestamp
+        );
     }
 
 }
