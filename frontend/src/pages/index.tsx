@@ -81,7 +81,7 @@ export default function Home() {
                         </Heading>
                         <Spacer />
                         <BBSHeading>Ethereum Network</BBSHeading>
-                        <BBSHeading>Connect Wallet</BBSHeading>
+                        <BBSHeading headingProps={{ onClick: () => connect({ connector: connectors[0] }) }}>Connect Wallet</BBSHeading>
                     </HStack>
                     <Box border="2px solid #fff" borderRadius={10} padding={5}>
                         <BBSHeading headingProps={{ mb: 2 }}>&gt; Boards</BBSHeading>
