@@ -81,9 +81,12 @@ export default function Home() {
                         <BBSHeading headingProps={{ mb: 2 }}>&gt; Boards</BBSHeading>
                         <Text>
                             {boardsResult.map((board, i) => (
-                                <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
-                                    {(i == 0 ? "" : " / ") + board.boardTitle}
-                                </Link>
+                                <>
+                                    {i == 0 ? "" : " / "}
+                                    <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
+                                        {board.boardTitle}
+                                    </Link>
+                                </>
                             ))}
                         </Text>
                         <Text>[See More]</Text>
