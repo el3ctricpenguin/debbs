@@ -1,6 +1,6 @@
 import { BBSHeading } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { Link, Text } from "@chakra-ui/react";
+import { FormControl, Link, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import Table from "cli-table3";
@@ -71,6 +71,9 @@ export default function Home() {
         },
     ];
 
+    const primaryColor = "white";
+    const bgColor = "#3355FF";
+
     return (
         <>
             <Head>
@@ -80,6 +83,8 @@ export default function Home() {
             </Head>
             <BBSLayout>
                 <>
+                    <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Create A Thread</BBSHeading>
+
                     <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Threads</BBSHeading>
                     <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize={11}>
                         {table.toString()}

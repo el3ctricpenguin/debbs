@@ -1,5 +1,5 @@
 import { Box, HStack, Heading, Spacer } from "@chakra-ui/react";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
 import shortenAddress from "@/utils/shortenAddress";
@@ -9,15 +9,20 @@ export default function BBSLayout({ children }: { children: ReactElement }) {
     const { address, isConnected } = useAccount();
     const { connect, connectors } = useConnect();
     const { disconnect } = useDisconnect();
+    const primaryColor = "white";
+    const bgColor = "#3355FF";
+    useEffect(() => {
+        document.body.style.backgroundColor = bgColor;
+    }, [bgColor]);
     return (
-        <Box bgColor="#3355FF" color="white" w="full" h="full">
+        <Box bgColor={bgColor} color={primaryColor} w="full" h="full">
             <Box w={960} margin="0 auto" pt={16}>
                 <HStack mb={3} px={2}>
                     <Heading
                         fontSize={24}
                         fontStyle="italic"
-                        bgColor="white"
-                        color="#3355FF"
+                        bgColor={primaryColor}
+                        color={bgColor}
                         pl={3}
                         pr={4}
                         pt={1.5}

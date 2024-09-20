@@ -15,7 +15,7 @@ const createTheme = () =>
         },
         styles: {
             global: {
-                body: { bgColor: "#3355FF" },
+                body: {},
             },
         },
         components: {
