@@ -34,6 +34,21 @@ export default function Home() {
         },
     ];
 
+    const recentPostsResult = [
+        {
+            account: "sbf.eth",
+            threadDescription: "I’ll buy as much as ETH has you have...",
+        },
+        {
+            account: "0x92da1...2ed3a",
+            threadDescription: "Ethereum is so dead!!",
+        },
+        {
+            account: "house-boy.eth",
+            threadDescription: "I made 200k buying vegetable tokens last year",
+        },
+    ];
+
     const Hr = chakra("hr");
     return (
         <>
@@ -82,9 +97,12 @@ export default function Home() {
                         ))}
 
                         <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                        <Text>[sbf.eth] I’ll buy as much as ETH has you have...</Text>
-                        <Text>[0x92da1...2ed3a] Ethereum is so dead!!</Text>
-                        <Text>[house-boy.eth] I made 200k buying vegetable tokens last year</Text>
+                        {recentPostsResult.map((post, i) => (
+                            <Text key={i}>
+                                [{post.account}] {post.threadDescription}
+                            </Text>
+                        ))}
+
                         <Button onClick={() => disconnect()}>Disconnect</Button>
                         <Text>{address}</Text>
                     </Box>
