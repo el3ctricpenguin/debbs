@@ -108,4 +108,19 @@ contract deBBS {
         );
     }
 
+    function getPost(uint256 postId) public view returns (
+        uint256,
+        address,
+        string memory,
+        uint256
+    ) {
+        Post memory post = posts[postId];
+        return (
+            post.postId,
+            post.postOwner,
+            post.postContent,
+            post.timestamp
+        );
+    }
+
 }

@@ -70,11 +70,23 @@ describe("deBBS Tests", function () {
 
   describe("Post Creation Tests", function () {
     it("Should create a post with correct fee and correct data", async function () {
-      
+      const { deBBS, owner, addr1, addr2, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      const postTitle = "Test post";
+      await deBBS.connect(addr1).createPost(postTitle, { value: postCreationFee });
+
+      const post = await deBBS.getPost(3);
+      expect(post[1]).to.equal(addr1.address);
+      expect(post[2]).to.equal(postTitle);
     });
 
     it("Should revert when incorrect fee is sent for creating a post", async function () {
+      const { deBBS, owner, addr1, addr2, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
+      const postTitle = "Test post";
+      const incorrectPostCreationFee = ethers.parseEther("0.0002");
+      await expect(deBBS.connect(addr1).createPost(postTitle, { value: incorrectPostCreationFee }))
+        .to.be.revertedWith("You should pay correct fee to create a post.");
     });
 
   });
