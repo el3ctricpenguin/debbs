@@ -53,7 +53,7 @@ contract deBBS {
     }
 
     function createThread(string memory threadTitle) public payable {
-        require(msg.value == createThreadFee, "You should pay correct fee to create a thread");
+        require(msg.value == createThreadFee, "You should pay correct fee to create a thread.");
 
         uint256 threadId = threads.length;
 
@@ -66,7 +66,7 @@ contract deBBS {
     }
 
     function createPost(string memory postContent) public payable {
-        require(msg.value == createPostFee, "You should pay correct fee to create a post");
+        require(msg.value == createPostFee, "You should pay correct fee to create a post.");
 
         uint256 postId = posts.length;
 
@@ -90,6 +90,21 @@ contract deBBS {
             board.boardOwner,
             board.boardTitle,
             board.timestamp
+        );
+    }
+
+    function getThread(uint256 threadId) public view returns (
+        uint256,
+        address,
+        string memory,
+        uint256
+    ) {
+        Thread memory thread = threads[threadId];
+        return (
+            thread.threadId,
+            thread.threadOwner,
+            thread.threadTitle,
+            thread.timestamp
         );
     }
 

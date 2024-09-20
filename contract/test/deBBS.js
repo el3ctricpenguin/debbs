@@ -48,11 +48,23 @@ describe("deBBS Tests", function () {
 
   describe("Thread Creation Tests", function () {
     it("Should create a thread with correct fee and correct data", async function () {
+      const { deBBS, owner, addr1, addr2, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
+      const threadTitle = "Test thread";
+      await deBBS.connect(addr1).createThread(threadTitle, { value: threadCreationFee });
+
+      const thread = await deBBS.getThread(3);
+      expect(thread[1]).to.equal(addr1.address);
+      expect(thread[2]).to.equal(threadTitle);
     });
 
     it("Should revert when incorrect fee is sent for creating a thread", async function () {
-        
+      const { deBBS, owner, addr1, addr2, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      const threadTitle = "Test thread";
+      const incorrectThreadCreationFee = ethers.parseEther("0.002");
+      await expect(deBBS.connect(addr1).createThread(threadTitle, { value: incorrectThreadCreationFee }))
+        .to.be.revertedWith("You should pay correct fee to create a thread.");
     });
   });
 
