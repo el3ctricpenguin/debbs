@@ -9,7 +9,7 @@ contract deBBS {
         uint256 boardId;
         address boardOwner;
         string boardTitle;
-        string timestamp;
+        uint256 timestamp;
     }
 
     struct Thread {
@@ -26,11 +26,28 @@ contract deBBS {
         uint256 timestamp;
     }
 
-    constructor(uint _unlockTime) payable {
+    Board[] public boards;
+    Thread[] public threads;
+    Post[] public posts;
+    uint256 public createBoardFee;
+    uint256 public createThreadFee;
+    uint256 public createPostFee;
+
+    constructor() {
 
     }
 
-    function withdraw() public {
-    
+    function createBoard(string memory boardTitle) public payable {
+        require(msg.value == createBoardFee, "You should pay correct fee to create a board.");
+        
+        uint256 boardId = boards.length + 1;
+
+        boards.push(Board({
+            boardId: boardId,
+            boardOwner: msg.sender,
+            boardTitle: boardTitle,
+            timestamp: block.timestamp
+        }));
+        
     }
 }
