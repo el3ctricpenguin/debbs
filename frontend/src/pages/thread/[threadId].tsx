@@ -163,16 +163,18 @@ export default function Thread() {
                             const svgString = jdenticon.toSvg(post.postOwner, 20);
                             return (
                                 <Box key={i}>
-                                    <HStack align="start">
-                                        <Box border={`1px solid ${primaryColor}`}>
-                                            <Box w={5} h={5} dangerouslySetInnerHTML={{ __html: svgString }}></Box>
-                                        </Box>
-                                        <Text>
-                                            <EnsNameOrAddress address={post.postOwner} shorten />
-                                        </Text>
-                                    </HStack>
-                                    <Text>{post.postContent}</Text>
-                                    <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
+                                    <VStack spacing={2} align="start">
+                                        <HStack justify="left">
+                                            <Box border={`1px solid ${primaryColor}`}>
+                                                <Box w={5} h={5} dangerouslySetInnerHTML={{ __html: svgString }}></Box>
+                                            </Box>
+                                            <Text>
+                                                <EnsNameOrAddress address={post.postOwner} shorten />
+                                            </Text>
+                                        </HStack>
+                                        <Text>{post.postContent}</Text>
+                                        <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
+                                    </VStack>
                                     <Hr borderStyle="dashed" my={2} />
                                 </Box>
                             );
