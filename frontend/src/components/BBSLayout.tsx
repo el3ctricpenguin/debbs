@@ -42,7 +42,7 @@ export default function BBSLayout({ children, primaryColor, bgColor }: { childre
                             {isConnected && address ? shortenAddress(address) : "Connect Wallet"}
                         </BBSHeadingButton>
                     </HStack>
-                    <Box border="2px solid #fff" borderRadius={10} padding={5}>
+                    <Box border={`2px solid ${primaryColor}`} borderRadius={10} padding={5}>
                         {children}
                     </Box>
                 </Box>
