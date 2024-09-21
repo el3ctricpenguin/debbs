@@ -9,13 +9,13 @@ import { Box, chakra, Link, Text, Tooltip } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import useSWR from "swr";
+import { getAddress } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 
 const primaryColor = "#fff";
 const bgColor = "#335CFF";
 
-const query = `
-{
+const query = `{
   threadCreateds(first: 3, orderBy: timestamp, orderDirection: desc) {
     threadId
     parentBoardId
@@ -32,8 +32,28 @@ const query = `
     isDeleted
     mentionTo
   }
-}
-`;
+}`;
+
+type theGraphResponse = {
+    data: {
+        postCreateds: {
+            postId: string;
+            parentThreadId: string;
+            postOwner: string;
+            postContent: string;
+            timestamp: string;
+            isDeleted: boolean;
+            mentionTo: string;
+        }[];
+        threadCreateds: {
+            threadId: string;
+            parentBoardId: string;
+            threadOwner: string;
+            threadTitle: string;
+            timestamp: string;
+        }[];
+    };
+};
 
 export default function Home() {
     const { chain } = useAccount();
@@ -44,10 +64,10 @@ export default function Home() {
     });
     console.log("getBoardsResult", getBoardsResult);
 
-    const { data: theGraphResult } = useSWR(query, theGraphFetcher);
+    const { data: theGraphResult } = useSWR<theGraphResponse>(query, theGraphFetcher);
     console.log(theGraphResult);
-    console.log("postCreateds", theGraphResult && theGraphResult.data.postCreateds);
-    console.log("threadCreateds", theGraphResult && theGraphResult.data.threadCreateds);
+    // console.log("postCreateds", theGraphResult && JSON.stringify(theGraphResult.data.postCreateds));
+    // console.log("threadCreateds", theGraphResult && JSON.stringify(theGraphResult.data.threadCreateds));
 
     const recentThreadsResult = theGraphResult && theGraphResult.data.threadCreateds;
     const recentPostsResult = theGraphResult && theGraphResult.data.postCreateds;
@@ -97,16 +117,17 @@ export default function Home() {
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
                     {/* FIXME: add type to swr  */}
-                    {recentThreadsResult.map((thread, i) => (
-                        <Text key={i}>
-                            <Link as={NextLink} href={`/user/${thread.threadOwner}`}>
-                                [<EnsNameOrAddress address={thread.threadOwner} shorten />]
-                            </Link>{" "}
-                            <Link as={NextLink} href={`/post/${thread.threadId}`}>
-                                {thread.threadTitle}
-                            </Link>
-                        </Text>
-                    ))}
+                    {recentThreadsResult &&
+                        recentThreadsResult.map((thread, i) => (
+                            <Text key={i}>
+                                <Link as={NextLink} href={`/user/${thread.threadOwner}`}>
+                                    [<EnsNameOrAddress address={getAddress(thread.threadOwner)} shorten />]
+                                </Link>{" "}
+                                <Link as={NextLink} href={`/post/${thread.threadId}`}>
+                                    {thread.threadTitle}
+                                </Link>
+                            </Text>
+                        ))}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {/* FIXME: add type to swr  */}
@@ -114,7 +135,7 @@ export default function Home() {
                         recentPostsResult.map((post, i) => (
                             <Text key={i}>
                                 <Link as={NextLink} href={`/user/${post.postOwner}`}>
-                                    [<EnsNameOrAddress address={post.postOwner} shorten />]
+                                    [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
                                 </Link>{" "}
                                 <Link as={NextLink} href={`/post/${post.postId}`}>
                                     {post.postContent}
