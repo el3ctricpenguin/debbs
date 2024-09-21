@@ -15,34 +15,34 @@ export function DashboardTable() {
             <Table size="sm" w={500}>
                 <Tbody borderRight={`1px solid ${primaryColor}`}>
                     <Tr borderTop={`1px solid ${primaryColor}`}>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                             contract address
                         </Td>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                             {getDeBBSAddress(chain?.id)}
                         </Td>
                     </Tr>
                     <Tr borderTop={`1px solid ${primaryColor}`}>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                             network
                         </Td>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                             {chain?.name}
                         </Td>
                     </Tr>
                     <Tr borderTop={`1px solid ${primaryColor}`}>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                             total users
                         </Td>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                            [not implemented]
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
+                            7
                         </Td>
                     </Tr>
                     <Tr borderTop={`1px solid ${primaryColor}`}>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                             total fee earned
                         </Td>
-                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                        <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                             [not implemented]
                         </Td>
                     </Tr>

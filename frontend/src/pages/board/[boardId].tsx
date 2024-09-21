@@ -232,7 +232,7 @@ export default function Board() {
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {recentPostsResult &&
                         recentPostsResult.map((post, i) => (
-                            <Text key={i}>
+                            <Text key={i} isTruncated>
                                 <Link as={NextLink} href={`/user/${post.postOwner}`}>
                                     [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
                                 </Link>{" "}
