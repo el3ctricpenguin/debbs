@@ -12,7 +12,6 @@ import { useState } from "react";
 import { Addresses } from "@/constants/Addresses";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
-import { tr } from "framer-motion/client";
 
 export default function Home() {
     const { chain } = useAccount();
@@ -24,7 +23,7 @@ export default function Home() {
 
     const boardId = 0;
 
-    const { data: getThreadsByBoardResult } = useReadContract({
+    const { data: getThreadsByBoardResult, refetch: refetchGetThreadsByBoard } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
         abi: deBbsAbi,
         functionName: "getThreadsByBoard",
@@ -134,6 +133,7 @@ export default function Home() {
             if (createThreadReceipt.status === "reverted") {
                 throw new Error("Create Thread Tx failed");
             }
+            refetchGetThreadsByBoard();
             toast({
                 title: "Create Thread Tx Success",
                 description: createThreadTx,
