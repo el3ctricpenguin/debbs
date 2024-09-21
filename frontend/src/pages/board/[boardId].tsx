@@ -216,7 +216,7 @@ export default function Home() {
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
 
                     <TableContainer>
-                        <Table size="sm" w={500}>
+                        <Table size="sm">
                             <Thead>
                                 <Tr>
                                     <Th color={primaryColor}>moderator</Th>
@@ -231,6 +231,7 @@ export default function Home() {
                                             threadOwner={thread.threadOwner}
                                             threadId={thread.threadId}
                                             threadTitle={thread.threadTitle}
+                                            createThreadFee={createThreadFee ? createThreadFee : BigInt(0)}
                                             key={i}
                                         />
                                     ))}

@@ -1,5 +1,6 @@
-import { BBSHeading } from "@/components/BBSHeading";
+import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
+import { DashboardTable } from "@/components/DashboardTable";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { chakra, Link, Text } from "@chakra-ui/react";
@@ -64,7 +65,9 @@ export default function Home() {
             </Head>
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
-                    <BBSHeading headingProps={{ mb: 2 }}>&gt; Boards</BBSHeading>
+                    <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Dashboard: Welcome to deBBS`}</BBSHeadingTitle>
+                    <DashboardTable />
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Boards</BBSHeading>
                     <Text>
                         {getBoardsResult &&
                             getBoardsResult.map((board, i) => (
