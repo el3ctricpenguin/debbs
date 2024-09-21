@@ -3,7 +3,7 @@ import { Tr, Td, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useContext } from "react";
 import { EnsNameOrAddress } from "./EnsNameOrAddress";
-import { Address } from "viem";
+import { Address, formatEther } from "viem";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
@@ -43,7 +43,7 @@ export function ThreadTableRow({
                 </Link>
             </Td>
             <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                {postsCount !== undefined && Number(postsCount * createThreadFee).toFixed(4)} ETH
+                {postsCount !== undefined && Number(formatEther(postsCount * createThreadFee)).toFixed(4)} ETH
             </Td>
         </Tr>
     );
