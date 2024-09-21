@@ -12,7 +12,6 @@ import { theGraphFetcher } from "@/utils/theGraphFetcher";
 import {
     Box,
     Button,
-    chakra,
     FormControl,
     HStack,
     Input,
@@ -91,6 +90,36 @@ export default function Home() {
         functionName: "createBoardFee",
         abi: deBbsAbi,
     });
+    const { data: createThreadFee } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "createThreadFee",
+        abi: deBbsAbi,
+    });
+    const { data: createPostFee } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "createPostFee",
+        abi: deBbsAbi,
+    });
+    const { data: getThreadsResult } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "getThreadsCountByBoard",
+        abi: deBbsAbi,
+        args: [BigInt(0)],
+    });
+    const { data: getPostsCountResult } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "getPostsCount",
+        abi: deBbsAbi,
+    });
+
+    const totalFees =
+        getBoardsResult &&
+        createBoardFee &&
+        getThreadsResult &&
+        createThreadFee &&
+        createPostFee &&
+        getPostsCountResult &&
+        createBoardFee * BigInt(getBoardsResult.length) + createThreadFee * getThreadsResult + createPostFee * getPostsCountResult;
 
     const { data: theGraphResult } = useSWR<theGraphResponse>(query, theGraphFetcher);
     console.log(theGraphResult);
@@ -99,8 +128,6 @@ export default function Home() {
 
     const recentThreadsResult = theGraphResult && theGraphResult.data.threadCreateds;
     const recentPostsResult = theGraphResult && theGraphResult.data.postCreateds;
-
-    const Hr = chakra("hr");
 
     const primaryColor = getDefaultPrimaryColor(chain && chain.id);
     const bgColor = getDefaultBgColor(chain && chain.id);
@@ -181,7 +208,7 @@ export default function Home() {
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
                     <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Dashboard: Welcome to deBBS`}</BBSHeadingTitle>
-                    <DashboardTable />
+                    <DashboardTable totalFees={totalFees} />
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Boards</BBSHeading>
                     <TableContainer>
@@ -217,8 +244,7 @@ export default function Home() {
                             </Tbody>
                         </Table>
                     </TableContainer>
-                    <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
-                    <Text>
+                    <Text mt={2}>
                         {getBoardsResult &&
                             getBoardsResult.map((board, i) =>
                                 chain && chain.id == sepolia.id && i == 3 ? (
