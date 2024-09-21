@@ -23,6 +23,24 @@
       },
       {
         "indexed": false,
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "primaryColor",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "bgColor",
+        "type": "string"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "timestamp",
         "type": "uint256"
@@ -91,6 +109,12 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "parentThreadId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "postOwner",
         "type": "address"
@@ -104,13 +128,19 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "parentThreadId",
+        "name": "timestamp",
         "type": "uint256"
       },
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "isDeleted",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
-        "name": "timestamp",
+        "name": "mentionTo",
         "type": "uint256"
       }
     ],
@@ -128,6 +158,12 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "parentBoardId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "threadOwner",
         "type": "address"
@@ -141,14 +177,14 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "parentBoardId",
+        "name": "timestamp",
         "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
+        "internalType": "address[]",
+        "name": "bannedUsers",
+        "type": "address[]"
       }
     ],
     "name": "ThreadCreated",

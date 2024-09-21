@@ -8,9 +8,9 @@ dataSources:
     name: deBBS
     network: linea-sepolia
     source:
-      address: "0xb3CAEee35bC9330D253BE2901e2eB51091b7D1AB"
+      address: "0x2A7c33C814FDB671EafD1269c989ef4d51BE966E"
       abi: deBBS
-      startBlock: 3836266
+      startBlock: 3836586
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -24,12 +24,12 @@ dataSources:
         - name: deBBS
           file: ./abis/deBBS.json
       eventHandlers:
-        - event: BoardCreated(uint256,address,string,uint256)
+        - event: BoardCreated(uint256,address,string,string,string,string,uint256)
           handler: handleBoardCreated
         - event: Mention(uint256,uint256,address,address,string,uint256,uint256)
           handler: handleMention
-        - event: PostCreated(uint256,address,string,uint256,uint256)
+        - event: PostCreated(uint256,uint256,address,string,uint256,bool,uint256)
           handler: handlePostCreated
-        - event: ThreadCreated(uint256,address,string,uint256,uint256)
+        - event: ThreadCreated(uint256,uint256,address,string,uint256,address[])
           handler: handleThreadCreated
       file: ./src/de-bbs.ts

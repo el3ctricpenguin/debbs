@@ -41,9 +41,9 @@ contract deBBS {
     uint256 public createThreadFee;
     uint256 public createPostFee;
 
-    event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, uint256 timestamp);
-    event ThreadCreated(uint256 threadId, address threadOwner, string threadTitle, uint256 parentBoardId, uint256 timestamp);
-    event PostCreated(uint256 postId, address postOwner, string postContent, uint256 parentThreadId, uint256 timestamp);
+    event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, string description, string primaryColor, string bgColor, uint256 timestamp);
+    event ThreadCreated(uint256 threadId, uint256 parentBoardId, address threadOwner, string threadTitle, uint256 timestamp, address[] bannedUsers);
+    event PostCreated(uint256 postId, uint256 parentThreadId, address postOwner, string postContent, uint256 timestamp, bool isDeleted, uint256 mentionTo);
     event Mention(uint256 postIdFrom, uint256 postIdTo, address mentionFrom, address mentionTo, string replyContent, uint256 parentThreadId, uint256 timestamp);
 
     mapping(uint256 => uint256[]) public boardToThreads; 
@@ -77,7 +77,7 @@ contract deBBS {
         }));
 
         _sendCreateBoardFeeToFrontendOwner(frontendOwnerAddress);
-        emit BoardCreated(boardId, msg.sender, boardTitle, block.timestamp);
+        emit BoardCreated(boardId, msg.sender, boardTitle, description, primaryColor, bgColor, block.timestamp);
 
     }
 
@@ -98,7 +98,7 @@ contract deBBS {
 
         boardToThreads[boardId].push(threadId);
         _sendCreateThreadFeeToBoardOwner(boardId, frontendOwnerAddress);
-        emit ThreadCreated(threadId, msg.sender, threadTitle, boardId, block.timestamp);
+        emit ThreadCreated(threadId, boardId, msg.sender, threadTitle, block.timestamp, new address[](0));
     }
 
     function createPost(uint256 threadId, uint256 mentionTo, string memory postContent, address frontendOwnerAddress) public payable {
@@ -122,8 +122,8 @@ contract deBBS {
 
         threadToPosts[threadId].push(postId);
         _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
-        emit PostCreated(postId, msg.sender, postContent, threadId, block.timestamp);
-
+        emit PostCreated(postId, threadId, msg.sender, postContent, block.timestamp, false, mentionTo);
+        
         if(mentionTo != postId) {
             emit Mention(postId, mentionTo, msg.sender, posts[mentionTo].postOwner ,postContent, threadId, block.timestamp);
         }
