@@ -29,6 +29,7 @@ type PostCreated @entity(immutable: true) {
   timestamp: BigInt! # uint256
   isDeleted: Boolean! # bool
   mentionTo: BigInt! # uint256
+  count: Int!
 }
 
 type ThreadCreated @entity(immutable: true) {
