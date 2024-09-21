@@ -78,7 +78,7 @@ export default function Home() {
                     <Text>[See More]</Text>
                     <Hr borderStyle="dashed" my={2} />
 
-                    <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Threads</BBSHeading>
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
                     {recentThreadsResult.map((thread, i) => (
                         <Text key={i}>
                             <Link as={NextLink} href={`/account/${thread.account}`}>
@@ -90,7 +90,7 @@ export default function Home() {
                         </Text>
                     ))}
 
-                    <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Posts</BBSHeading>
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {recentPostsResult.map((post, i) => (
                         <Text key={i}>
                             <Link as={NextLink} href={`/account/${post.account}`}>

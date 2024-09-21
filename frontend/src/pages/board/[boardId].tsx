@@ -1,6 +1,6 @@
 import { BBSHeading } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { Link, Text } from "@chakra-ui/react";
+import { Button, FormControl, HStack, Input, Link, Text, VStack } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import Table from "cli-table3";
@@ -83,14 +83,36 @@ export default function Home() {
             </Head>
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
-                    <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Create A Thread</BBSHeading>
+                    <BBSHeading headingProps={{ mb: 2 }}>&gt; Create A Thread</BBSHeading>
+                    <FormControl as="form">
+                        <VStack align="start" spacing={2}>
+                            <Input
+                                variant="bbs"
+                                w={450}
+                                border={`2px ${primaryColor} solid`}
+                                bgColor={bgColor}
+                                placeholder="Thread Title"
+                                _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
+                                isRequired
+                                name="threadTitle"
+                            />
+                            <HStack>
+                                <Button variant="bbs" bgColor={primaryColor} color={bgColor} type="submit">
+                                    Create A Thread!
+                                </Button>
+                                <Text fontSize={14} display="inline-block" mx={4} fontStyle="italic">
+                                    You have to pay {createThreadFee} ETH
+                                </Text>
+                            </HStack>
+                        </VStack>
+                    </FormControl>
 
-                    <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Threads</BBSHeading>
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
                     <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize={11}>
                         {table.toString()}
                     </Text>
 
-                    <BBSHeading headingProps={{ mt: 4, mb: 2 }}>&gt; Recent Posts</BBSHeading>
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {recentPostsResult.map((post, i) => (
                         <Text key={i}>
                             <Link as={NextLink} href={`/account/${post.account}`}>
