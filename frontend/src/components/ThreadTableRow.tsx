@@ -78,7 +78,7 @@ export function BoardTableRow({
         <></>
     ) : (
         <Tr borderTop={`1px solid ${primaryColor}`}>
-            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1.5}>
                 <Tooltip
                     label={
                         <Box color={primaryColor}>
@@ -99,16 +99,16 @@ export function BoardTableRow({
                     </Link>
                 </Tooltip>
             </Td>
-            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1.5}>
                 {boardDescription}
             </Td>
-            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1.5}>
                 <Link as={NextLink} href={`/user/${boardOwner}`}>
                     <EnsNameOrAddress address={boardOwner} shorten />
                 </Link>
             </Td>
 
-            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1.5}>
                 {threadsCount !== undefined && Number(formatEther(threadsCount * createBoardFee)).toFixed(4)} ETH
             </Td>
         </Tr>
