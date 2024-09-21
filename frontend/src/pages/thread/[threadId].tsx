@@ -80,7 +80,12 @@ export default function Thread() {
                 address: getDeBBSAddress(chain && chain.id),
                 abi: deBbsAbi,
                 functionName: "createPost",
-                args: [BigInt(threadId), formData.postContent, formData.frontendOwnerAddress],
+                args: [
+                    BigInt(threadId),
+                    BigInt(getPostsByThreadResult ? getPostsByThreadResult.length : Infinity),
+                    formData.postContent,
+                    formData.frontendOwnerAddress,
+                ],
                 value: BigInt(createPostFee ? createPostFee : BigInt(0)),
             });
             if (!createPostTx) {
