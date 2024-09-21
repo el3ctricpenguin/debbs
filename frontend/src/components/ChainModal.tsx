@@ -1,6 +1,16 @@
 import { ColorsContext } from "@/config/ColorContext";
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, VStack } from "@chakra-ui/react";
-import { ReactElement, useContext } from "react";
+import {
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Spinner,
+    VStack,
+} from "@chakra-ui/react";
+import { ReactElement, useContext, useState } from "react";
 import { useSwitchChain } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
 
@@ -9,7 +19,8 @@ export const ChainModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
     const primaryColor = colors[0];
     const bgColor = colors[1];
 
-    const { chains, switchChain } = useSwitchChain();
+    const { chains, switchChain, isPending } = useSwitchChain();
+    const [selectedNetwork, setSelectedNetwork] = useState(-1);
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -23,8 +34,14 @@ export const ChainModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                                 buttonProps={{
                                     w: "full",
                                     onClick: () => {
+                                        setSelectedNetwork(i);
                                         switchChain({ chainId: chain.id });
                                     },
+                                    isLoading: isPending && selectedNetwork == i,
+                                    loadingText: chain.name,
+                                    spinner: <Spinner size="xs" display="inline-block" />,
+                                    // FIX ME: Spinner style
+                                    display: "inline-block",
                                 }}
                                 key={i}
                             >
