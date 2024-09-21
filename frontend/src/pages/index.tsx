@@ -116,7 +116,6 @@ export default function Home() {
                     <Hr borderStyle="dashed" my={2} />
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
-                    {/* FIXME: add type to swr  */}
                     {recentThreadsResult &&
                         recentThreadsResult.map((thread, i) => (
                             <Text key={i}>
@@ -130,7 +129,6 @@ export default function Home() {
                         ))}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                    {/* FIXME: add type to swr  */}
                     {recentPostsResult &&
                         recentPostsResult.map((post, i) => (
                             <Text key={i}>
