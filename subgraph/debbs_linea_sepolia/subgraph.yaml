@@ -1,0 +1,35 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: deBBS
+    network: linea-sepolia
+    source:
+      address: "0xb3CAEee35bC9330D253BE2901e2eB51091b7D1AB"
+      abi: deBBS
+      startBlock: 3836266
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BoardCreated
+        - Mention
+        - PostCreated
+        - ThreadCreated
+      abis:
+        - name: deBBS
+          file: ./abis/deBBS.json
+      eventHandlers:
+        - event: BoardCreated(uint256,address,string,uint256)
+          handler: handleBoardCreated
+        - event: Mention(uint256,uint256,address,address,string,uint256,uint256)
+          handler: handleMention
+        - event: PostCreated(uint256,address,string,uint256,uint256)
+          handler: handlePostCreated
+        - event: ThreadCreated(uint256,address,string,uint256,uint256)
+          handler: handleThreadCreated
+      file: ./src/de-bbs.ts

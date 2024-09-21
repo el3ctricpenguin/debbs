@@ -1,0 +1,36 @@
+type BoardCreated @entity(immutable: true) {
+  id: Bytes!
+  boardId: BigInt! # uint256
+  boardOwner: Bytes! # address
+  boardTitle: String! # string
+  timestamp: BigInt! # uint256
+}
+
+type Mention @entity(immutable: true) {
+  id: Bytes!
+  postIdFrom: BigInt! # uint256
+  postIdTo: BigInt! # uint256
+  mentionFrom: Bytes! # address
+  mentionTo: Bytes! # address
+  replyContent: String! # string
+  parentThreadId: BigInt! # uint256
+  timestamp: BigInt! # uint256
+}
+
+type PostCreated @entity(immutable: true) {
+  id: Bytes!
+  postId: BigInt! # uint256
+  postOwner: Bytes! # address
+  postContent: String! # string
+  parentThreadId: BigInt! # uint256
+  timestamp: BigInt! # uint256
+}
+
+type ThreadCreated @entity(immutable: true) {
+  id: Bytes!
+  threadId: BigInt! # uint256
+  threadOwner: Bytes! # address
+  threadTitle: String! # string
+  parentBoardId: BigInt! # uint256
+  timestamp: BigInt! # uint256
+}
