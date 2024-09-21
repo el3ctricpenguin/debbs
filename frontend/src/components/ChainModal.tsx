@@ -13,6 +13,7 @@ import {
 import { ReactElement, useContext, useState } from "react";
 import { useSwitchChain } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
+import { mainnet } from "viem/chains";
 
 export const ChainModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }): ReactElement => {
     const colors = useContext(ColorsContext);
@@ -29,25 +30,26 @@ export const ChainModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 <ModalCloseButton />
                 <ModalBody>
                     <VStack w={300} margin="0 auto">
-                        {chains.map((chain, i) => (
-                            <BBSHeadingButton
-                                buttonProps={{
-                                    w: "full",
-                                    onClick: () => {
-                                        setSelectedNetwork(i);
-                                        switchChain({ chainId: chain.id });
-                                    },
-                                    isLoading: isPending && selectedNetwork == i,
-                                    loadingText: chain.name,
-                                    spinner: <Spinner size="xs" display="inline-block" />,
-                                    // FIX ME: Spinner style
-                                    display: "inline-block",
-                                }}
-                                key={i}
-                            >
-                                {chain.name}
-                            </BBSHeadingButton>
-                        ))}
+                        {chains.map(
+                            (chain, i) =>
+                                chain !== mainnet && (
+                                    <BBSHeadingButton
+                                        buttonProps={{
+                                            w: "full",
+                                            onClick: () => {
+                                                setSelectedNetwork(i);
+                                                switchChain({ chainId: chain.id });
+                                            },
+                                            isLoading: isPending && selectedNetwork == i,
+                                            loadingText: chain.name,
+                                            spinner: <Spinner size="xs" />,
+                                        }}
+                                        key={i}
+                                    >
+                                        {chain.name}
+                                    </BBSHeadingButton>
+                                )
+                        )}
                     </VStack>
                 </ModalBody>
                 <ModalFooter />

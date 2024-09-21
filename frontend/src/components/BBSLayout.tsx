@@ -2,10 +2,11 @@ import { Box, HStack, Heading, Spacer, useDisclosure } from "@chakra-ui/react";
 import { ReactElement, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
-import shortenAddress from "@/utils/shortenAddress";
 import NextLink from "next/link";
 import { ColorsContext } from "@/config/ColorContext";
 import { ChainModal } from "./ChainModal";
+import useEnsNameOrAddress from "@/hooks/useEnsNameOrAddress";
+import { zeroAddress } from "viem";
 
 export default function BBSLayout({ children, primaryColor, bgColor }: { children: ReactElement; primaryColor: string; bgColor: string }) {
     const { address, isConnected, chain } = useAccount();
@@ -13,6 +14,8 @@ export default function BBSLayout({ children, primaryColor, bgColor }: { childre
     const { disconnect } = useDisconnect();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const displayName = useEnsNameOrAddress(address ? address : zeroAddress, true);
 
     useEffect(() => {
         document.body.style.backgroundColor = bgColor;
@@ -43,7 +46,7 @@ export default function BBSLayout({ children, primaryColor, bgColor }: { childre
                         <BBSHeadingButton
                             buttonProps={{ onClick: !isConnected ? () => connect({ connector: connectors[0] }) : () => disconnect() }}
                         >
-                            {isConnected && address ? shortenAddress(address) : "Connect Wallet"}
+                            {isConnected && address ? displayName : "Connect Wallet"}
                         </BBSHeadingButton>
                     </HStack>
                     <Box border={`2px solid ${primaryColor}`} borderRadius={10} padding={5}>

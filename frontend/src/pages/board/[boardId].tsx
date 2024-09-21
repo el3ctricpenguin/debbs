@@ -26,10 +26,28 @@ import { wagmiConfig } from "@/config/wagmi";
 import { useState } from "react";
 import { Addresses } from "@/constants/Addresses";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
-import { formatEther } from "viem";
+import { formatEther, getAddress } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
 import { ThreadTableRow } from "@/components/ThreadTableRow";
+import { theGraphFetcher } from "@/utils/theGraphFetcher";
+import useSWR from "swr";
+import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
+import { getDefaultBgColor, getDefaultPrimaryColor } from "@/constants/DefaultColors";
+
+type theGraphResponse = {
+    data: {
+        postCreateds: {
+            postId: string;
+            parentThreadId: string;
+            postOwner: string;
+            postContent: string;
+            timestamp: string;
+            isDeleted: boolean;
+            mentionTo: string;
+        }[];
+    };
+};
 
 export default function Board() {
     const { chain } = useAccount();
@@ -59,23 +77,21 @@ export default function Board() {
         abi: deBbsAbi,
     });
 
-    const recentPostsResult = [
-        {
-            postId: 0,
-            account: "sbf.eth",
-            postContent: "I’ll buy as much as ETH has you have...",
-        },
-        {
-            postId: 0,
-            account: "0x92da1...2ed3a",
-            postContent: "Ethereum is so dead!!",
-        },
-        {
-            postId: 0,
-            account: "house-boy.eth",
-            postContent: "I made 200k buying vegetable tokens last year",
-        },
-    ];
+    const query = `{
+        postCreateds(first:3, where: {},orderBy: timestamp, orderDirection: desc) {
+          postId
+          parentThreadId
+          postOwner
+          postContent
+          timestamp
+          isDeleted
+          mentionTo
+        }
+      }`;
+
+    const { data: theGraphResult } = useSWR<theGraphResponse>(query, theGraphFetcher);
+
+    const recentPostsResult = theGraphResult && theGraphResult.data.postCreateds;
 
     const [formData, setFormData] = useState({
         threadTitle: "",
@@ -134,8 +150,8 @@ export default function Board() {
         }
     };
 
-    const primaryColor = "white";
-    const bgColor = "#3355FF";
+    const primaryColor = getDefaultPrimaryColor(chain && chain.id);
+    const bgColor = getDefaultBgColor(chain && chain.id);
 
     return (
         <>
@@ -159,11 +175,19 @@ export default function Board() {
                                     </Td>
                                 </Tr>
                                 <Tr>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[2]}</Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor}>
+                                        description
+                                    </Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor}>
+                                        {getBoardResult && getBoardResult[2]}
+                                    </Td>
                                 </Tr>
                                 <Tr>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                    <Td
+                                        borderLeft={`1px solid ${primaryColor}`}
+                                        borderBottom={`1px solid ${primaryColor}`}
+                                        borderTop={`1px solid ${primaryColor}`}
+                                    >
                                         time created
                                     </Td>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
@@ -175,14 +199,19 @@ export default function Board() {
                     </TableContainer>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
-
                     <TableContainer>
                         <Table size="sm">
                             <Thead>
                                 <Tr>
-                                    <Th color={primaryColor}>moderator</Th>
-                                    <Th color={primaryColor}>title</Th>
-                                    <Th color={primaryColor}>earned fee</Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        moderator
+                                    </Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        title
+                                    </Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        earned fee
+                                    </Th>
                                 </Tr>
                             </Thead>
                             <Tbody borderRight={`1px solid ${primaryColor}`}>
@@ -201,16 +230,17 @@ export default function Board() {
                     </TableContainer>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                    {recentPostsResult.map((post, i) => (
-                        <Text key={i}>
-                            <Link as={NextLink} href={`/user/${post.account}`}>
-                                [{post.account}]
-                            </Link>{" "}
-                            <Link as={NextLink} href={`/post/${post.postId}`}>
-                                {post.postContent}
-                            </Link>
-                        </Text>
-                    ))}
+                    {recentPostsResult &&
+                        recentPostsResult.map((post, i) => (
+                            <Text key={i}>
+                                <Link as={NextLink} href={`/user/${post.postOwner}`}>
+                                    [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
+                                </Link>{" "}
+                                <Link as={NextLink} href={`/thread/${post.parentThreadId}`}>
+                                    {post.postContent}
+                                </Link>
+                            </Text>
+                        ))}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
@@ -221,7 +251,7 @@ export default function Board() {
                                 border={`2px ${primaryColor} solid`}
                                 bgColor={bgColor}
                                 placeholder="Thread Title"
-                                _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
+                                _placeholder={{ color: primaryColor == "#FFFFFF" ? "whiteAlpha.700" : primaryColor, fontStyle: "italic" }}
                                 isRequired
                                 name="threadTitle"
                                 value={formData.threadTitle}

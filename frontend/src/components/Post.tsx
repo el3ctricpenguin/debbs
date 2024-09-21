@@ -1,20 +1,22 @@
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
-import { Box, VStack, HStack, Text, chakra, Tooltip, Link } from "@chakra-ui/react";
+import { Box, VStack, HStack, Text, chakra, Tooltip, Link, Image } from "@chakra-ui/react";
 import { ColorsContext } from "@/config/ColorContext";
 import { useContext } from "react";
 import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
 import * as jdenticon from "jdenticon";
-import { Address } from "viem";
+import { Address, getAddress } from "viem";
 import NextLink from "next/link";
+import { normalize } from "path";
+import { useEnsName, useEnsAvatar } from "wagmi";
 
 type PostProps = {
-    postId: bigint;
-    parentThreadId: bigint;
-    postOwner: Address;
+    postId: bigint | string;
+    parentThreadId: bigint | string;
+    postOwner: Address | string;
     postContent: string;
-    timestamp: bigint;
+    timestamp: bigint | string;
     isDeleted: boolean;
-    mentionTo: bigint;
+    mentionTo: bigint | string;
 };
 
 export default function Post({ post }: { post: PostProps }) {
@@ -23,21 +25,35 @@ export default function Post({ post }: { post: PostProps }) {
     const bgColor = colors[1];
 
     const Hr = chakra("hr");
-    const svgString = jdenticon.toSvg(post.postOwner, 20);
+
+    const svgString = jdenticon.toSvg(post.postOwner, 28);
+
+    const { data: ensName } = useEnsName({
+        address: getAddress(post.postOwner),
+        chainId: 1,
+    });
+    const { data: ensAvatar } = useEnsAvatar({
+        name: normalize(String(ensName)),
+        chainId: 1,
+    });
     return (
         <Box>
             <VStack spacing={2} align="start">
                 <HStack justify="left">
                     <Link as={NextLink} href={`/user/${post.postOwner}`}>
                         <Box border={`1px solid ${primaryColor}`}>
-                            <Box w={5} h={5} dangerouslySetInnerHTML={{ __html: svgString }}></Box>
+                            {ensAvatar ? (
+                                <Image src={String(ensAvatar)} alt={String(ensName)} w={7} />
+                            ) : (
+                                <Box w={7} h={7} dangerouslySetInnerHTML={{ __html: svgString }} />
+                            )}
                         </Box>
                     </Link>
                     <Tooltip
                         label={
                             <Box>
                                 <Text fontWeight={900}>
-                                    &gt; <EnsNameOrAddress address={post.postOwner} shorten />
+                                    &gt; <EnsNameOrAddress address={getAddress(post.postOwner)} shorten />
                                 </Text>
                             </Box>
                             // TODO: create a component here
@@ -51,7 +67,7 @@ export default function Post({ post }: { post: PostProps }) {
                     >
                         <Link as={NextLink} href={`/user/${post.postOwner}`}>
                             <Text>
-                                <EnsNameOrAddress address={post.postOwner} shorten />
+                                <EnsNameOrAddress address={getAddress(post.postOwner)} shorten />
                             </Text>
                         </Link>
                     </Tooltip>
@@ -59,7 +75,7 @@ export default function Post({ post }: { post: PostProps }) {
                 <Text>{post.postContent}</Text>
                 <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
             </VStack>
-            <Hr borderStyle="dashed" my={2} />
+            <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
         </Box>
     );
 }

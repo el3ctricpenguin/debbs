@@ -23,10 +23,6 @@ export function handleBoardCreated(event: BoardCreatedEvent): void {
   entity.bgColor = event.params.bgColor
   entity.timestamp = event.params.timestamp
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
   entity.save()
 }
 
@@ -42,17 +38,21 @@ export function handleMention(event: MentionEvent): void {
   entity.parentThreadId = event.params.parentThreadId
   entity.timestamp = event.params.timestamp
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
   entity.save()
 }
+
+let byteArray: string[] = [];
+let count1 =0;
 
 export function handlePostCreated(event: PostCreatedEvent): void {
   let entity = new PostCreated(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
+  if(!byteArray.includes(event.params.postOwner.toString())) {
+    count1++;
+    byteArray.push(event.params.postOwner.toString());
+  }
+
   entity.postId = event.params.postId
   entity.parentThreadId = event.params.parentThreadId
   entity.postOwner = event.params.postOwner
@@ -60,11 +60,7 @@ export function handlePostCreated(event: PostCreatedEvent): void {
   entity.timestamp = event.params.timestamp
   entity.isDeleted = event.params.isDeleted
   entity.mentionTo = event.params.mentionTo
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
+  entity.count = count1
   entity.save()
 }
 
@@ -77,11 +73,6 @@ export function handleThreadCreated(event: ThreadCreatedEvent): void {
   entity.threadOwner = event.params.threadOwner
   entity.threadTitle = event.params.threadTitle
   entity.timestamp = event.params.timestamp
-  entity.bannedUsers = event.params.bannedUsers
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
 
   entity.save()
 }
