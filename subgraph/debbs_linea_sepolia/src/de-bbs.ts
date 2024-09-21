@@ -20,10 +20,6 @@ export function handleBoardCreated(event: BoardCreatedEvent): void {
   entity.boardTitle = event.params.boardTitle
   entity.timestamp = event.params.timestamp
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
   entity.save()
 }
 
@@ -39,10 +35,6 @@ export function handleMention(event: MentionEvent): void {
   entity.parentThreadId = event.params.parentThreadId
   entity.timestamp = event.params.timestamp
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
   entity.save()
 }
 
@@ -56,10 +48,6 @@ export function handlePostCreated(event: PostCreatedEvent): void {
   entity.parentThreadId = event.params.parentThreadId
   entity.timestamp = event.params.timestamp
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
   entity.save()
 }
 
@@ -72,10 +60,6 @@ export function handleThreadCreated(event: ThreadCreatedEvent): void {
   entity.threadTitle = event.params.threadTitle
   entity.parentBoardId = event.params.parentBoardId
   entity.timestamp = event.params.timestamp
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
 
   entity.save()
 }
