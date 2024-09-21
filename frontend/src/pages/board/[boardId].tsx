@@ -174,6 +174,44 @@ export default function Home() {
                         </Table>
                     </TableContainer>
 
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
+
+                    <TableContainer>
+                        <Table size="sm">
+                            <Thead>
+                                <Tr>
+                                    <Th color={primaryColor}>moderator</Th>
+                                    <Th color={primaryColor}>title</Th>
+                                    <Th color={primaryColor}>earned fee</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody borderRight={`1px solid ${primaryColor}`}>
+                                {getThreadsByBoardResult &&
+                                    getThreadsByBoardResult.map((thread, i) => (
+                                        <ThreadTableRow
+                                            threadOwner={thread.threadOwner}
+                                            threadId={thread.threadId}
+                                            threadTitle={thread.threadTitle}
+                                            createThreadFee={createThreadFee ? createThreadFee : BigInt(0)}
+                                            key={i}
+                                        />
+                                    ))}
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
+
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
+                    {recentPostsResult.map((post, i) => (
+                        <Text key={i}>
+                            <Link as={NextLink} href={`/account/${post.account}`}>
+                                [{post.account}]
+                            </Link>{" "}
+                            <Link as={NextLink} href={`/post/${post.postId}`}>
+                                {post.postContent}
+                            </Link>
+                        </Text>
+                    ))}
+
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
                         <VStack align="start" spacing={2}>
@@ -212,44 +250,6 @@ export default function Home() {
                             </HStack>
                         </VStack>
                     </FormControl>
-
-                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
-
-                    <TableContainer>
-                        <Table size="sm">
-                            <Thead>
-                                <Tr>
-                                    <Th color={primaryColor}>moderator</Th>
-                                    <Th color={primaryColor}>title</Th>
-                                    <Th color={primaryColor}>earned fee</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody borderRight={`1px solid ${primaryColor}`}>
-                                {getThreadsByBoardResult &&
-                                    getThreadsByBoardResult.map((thread, i) => (
-                                        <ThreadTableRow
-                                            threadOwner={thread.threadOwner}
-                                            threadId={thread.threadId}
-                                            threadTitle={thread.threadTitle}
-                                            createThreadFee={createThreadFee ? createThreadFee : BigInt(0)}
-                                            key={i}
-                                        />
-                                    ))}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
-
-                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                    {recentPostsResult.map((post, i) => (
-                        <Text key={i}>
-                            <Link as={NextLink} href={`/account/${post.account}`}>
-                                [{post.account}]
-                            </Link>{" "}
-                            <Link as={NextLink} href={`/post/${post.postId}`}>
-                                {post.postContent}
-                            </Link>
-                        </Text>
-                    ))}
                 </>
             </BBSLayout>
         </>
