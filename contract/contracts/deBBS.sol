@@ -9,6 +9,9 @@ contract deBBS {
         uint256 boardId;
         address boardOwner;
         string boardTitle;
+        string description;
+        string primaryColor;
+        string bgColor;
         uint256 timestamp;
     }
 
@@ -35,6 +38,10 @@ contract deBBS {
     uint256 public createThreadFee;
     uint256 public createPostFee;
 
+    event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, uint256 timestamp);
+    event ThreadCreated(uint256 threadId, address threadOwner, string threadTitle, uint256 parentBoardId, uint256 timestamp);
+    event PostCreated(uint256 postId, address postOwner, string postContent, uint256 parentThreadId, uint256 timestamp);
+
     mapping(uint256 => uint256[]) public boardToThreads; 
     mapping(uint256 => uint256[]) public threadToPosts; 
 
@@ -44,7 +51,13 @@ contract deBBS {
         createPostFee = 0.0001 ether;
     }
 
-    function createBoard(string memory boardTitle, address frontendOwnerAddress) public payable {
+    function createBoard(
+        string memory boardTitle,
+        string memory description,
+        string memory primaryColor,
+        string memory bgColor,
+        address frontendOwnerAddress
+    ) public payable {
         require(msg.value == createBoardFee, "You should pay correct fee to create a board.");
         
         uint256 boardId = boards.length;
@@ -53,10 +66,14 @@ contract deBBS {
             boardId: boardId,
             boardOwner: msg.sender,
             boardTitle: boardTitle,
+            description: description,
+            primaryColor: primaryColor,
+            bgColor: bgColor,
             timestamp: block.timestamp
         }));
 
         _sendCreateBoardFeeToFrontendOwner(frontendOwnerAddress);
+        emit BoardCreated(boardId, msg.sender, boardTitle, block.timestamp);
 
     }
 
@@ -75,6 +92,7 @@ contract deBBS {
 
         boardToThreads[boardId].push(threadId);
         _sendCreateThreadFeeToBoardOwner(boardId, frontendOwnerAddress);
+        emit ThreadCreated(threadId, msg.sender, threadTitle, boardId, block.timestamp);
     }
 
     function createPost(uint256 threadId, string memory postContent, address frontendOwnerAddress) public payable {
@@ -92,6 +110,7 @@ contract deBBS {
 
         threadToPosts[threadId].push(postId);
         _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
+        emit PostCreated(postId, msg.sender, postContent, threadId, block.timestamp);
     }
 
     function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {
