@@ -40,6 +40,55 @@ export const deBbsAbi = [
     anonymous: false,
     inputs: [
       {
+        name: 'postIdFrom',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'postIdTo',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'mentionFrom',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'mentionTo',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'replyContent',
+        internalType: 'string',
+        type: 'string',
+        indexed: false,
+      },
+      {
+        name: 'parentThreadId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'timestamp',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Mention',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
         name: 'postId',
         internalType: 'uint256',
         type: 'uint256',
@@ -172,6 +221,7 @@ export const deBbsAbi = [
     type: 'function',
     inputs: [
       { name: 'threadId', internalType: 'uint256', type: 'uint256' },
+      { name: 'mentionTo', internalType: 'uint256', type: 'uint256' },
       { name: 'postContent', internalType: 'string', type: 'string' },
       {
         name: 'frontendOwnerAddress',
@@ -214,6 +264,13 @@ export const deBbsAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'postId', internalType: 'uint256', type: 'uint256' }],
+    name: 'deletePost',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'boardId', internalType: 'uint256', type: 'uint256' }],
     name: 'getBoard',
     outputs: [
@@ -252,8 +309,11 @@ export const deBbsAbi = [
     name: 'getPost',
     outputs: [
       { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
       { name: '', internalType: 'address', type: 'address' },
       { name: '', internalType: 'string', type: 'string' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'bool', type: 'bool' },
       { name: '', internalType: 'uint256', type: 'uint256' },
     ],
     stateMutability: 'view',
@@ -273,9 +333,18 @@ export const deBbsAbi = [
           { name: 'postOwner', internalType: 'address', type: 'address' },
           { name: 'postContent', internalType: 'string', type: 'string' },
           { name: 'timestamp', internalType: 'uint256', type: 'uint256' },
+          { name: 'isDeleted', internalType: 'bool', type: 'bool' },
+          { name: 'mentionTo', internalType: 'uint256', type: 'uint256' },
         ],
       },
     ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getPostsCount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -290,6 +359,7 @@ export const deBbsAbi = [
     inputs: [{ name: 'threadId', internalType: 'uint256', type: 'uint256' }],
     name: 'getThread',
     outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
       { name: '', internalType: 'uint256', type: 'uint256' },
       { name: '', internalType: 'address', type: 'address' },
       { name: '', internalType: 'string', type: 'string' },
@@ -345,6 +415,8 @@ export const deBbsAbi = [
       { name: 'postOwner', internalType: 'address', type: 'address' },
       { name: 'postContent', internalType: 'string', type: 'string' },
       { name: 'timestamp', internalType: 'uint256', type: 'uint256' },
+      { name: 'isDeleted', internalType: 'bool', type: 'bool' },
+      { name: 'mentionTo', internalType: 'uint256', type: 'uint256' },
     ],
     stateMutability: 'view',
   },
