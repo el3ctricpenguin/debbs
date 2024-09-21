@@ -19,7 +19,6 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
-import TableCLI from "cli-table3";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
@@ -30,6 +29,7 @@ import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
+import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
 
 export default function Home() {
     const { chain } = useAccount();
@@ -230,7 +230,7 @@ export default function Home() {
                                         <Tr borderTop={`1px solid ${primaryColor}`} key={i}>
                                             <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
                                                 <Link as={NextLink} href={`/account/${thread.threadOwner}`}>
-                                                    {thread.threadOwner}
+                                                    <EnsNameOrAddress address={thread.threadOwner} shorten />
                                                 </Link>
                                             </Td>
                                             <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
