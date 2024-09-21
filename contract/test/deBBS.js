@@ -169,6 +169,14 @@ describe("deBBS Tests", function () {
 
   });
 
+  describe("Mention Post Tests", function () {
+    it("should revert when a user tries to mention a future post", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      await expect(deBBS.connect(addr1).createPost(0, await deBBS.getPostsCount() + 1n, postContent, frontendOwner.address, { value: postCreationFee }))
+      .to.be.revertedWith("You can't mention future posts.");
+    });
+  });
 
   describe("View Function Tests", function () {
     it("should work getThreadsByBoard", async function () {
@@ -194,7 +202,7 @@ describe("deBBS Tests", function () {
       expect((await deBBS.getPostsByThread(0)).length).to.equal(1);
 
       //There is two post in thread No.0.
-      await deBBS.connect(addr1).createPost(0, deBBS.posts.length, postContent, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr1).createPost(0, await deBBS.getPostsCount(), postContent, frontendOwner.address, { value: postCreationFee });
       expect((await deBBS.getPostsByThread(0)).length).to.equal(2);
 
       //There is no thread in thread No.1.
@@ -218,7 +226,7 @@ describe("deBBS Tests", function () {
   });
 
   describe("Event Emission Tests", function () {
-    it("should emit createBoard event", async function () {
+    it("should emit BoardCreated event", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createBoard(boardTitle, description, primaryColor, bgColor, frontendOwner.address, { value: boardCreationFee }))
@@ -226,7 +234,7 @@ describe("deBBS Tests", function () {
 
     });
 
-    it("should emit createThread event", async function () {
+    it("should emit ThreadCreated event", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee }))
@@ -234,11 +242,19 @@ describe("deBBS Tests", function () {
 
     });
 
-    it("should emit createPost event", async function () {
+    it("should emit PostCreated event", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      await expect(deBBS.connect(addr1).createPost(0, deBBS.posts.length, postContent, frontendOwner.address, { value: postCreationFee }))
+      await expect(deBBS.connect(addr1).createPost(0, await deBBS.getPostsCount(), postContent, frontendOwner.address, { value: postCreationFee }))
       .to.emit(deBBS, "PostCreated");
+
+    });
+
+    it("should emit mention event", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      await expect(deBBS.connect(addr1).createPost(0, await deBBS.getPostsCount() - 1n, postContent, frontendOwner.address, { value: postCreationFee }))
+        .to.emit(deBBS, "Mention");
 
     });
 
