@@ -200,4 +200,20 @@ contract deBBS {
         );
     }
 
+    function getPostsByThread(uint256 threadId) public view returns (Post[] memory) {
+        uint256[] memory targetPosts = threadToPosts[threadId];
+        Post[] memory postsByThread = new Post[](targetPosts.length);
+
+        for (uint256 i = 0; i < targetPosts.length; i++) {
+            Post memory post = posts[targetPosts[i]];
+            postsByThread[i] = post;
+        }
+
+        return postsByThread;
+    }
+
+    function getPostsCountByThread(uint threadId) public view returns (uint256) {
+        return threadToPosts[threadId].length;
+    }
+
 }

@@ -150,16 +150,33 @@ describe("deBBS Tests", function () {
     it("should work getThreadsByBoard", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      //There is one thread in board 0.
+      //There is one thread in board No.0.
       expect((await deBBS.getThreadsByBoard(0)).length).to.equal(1);
 
-      //There is two thread in board 0.
+      //There is two thread in board No.0.
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
       expect((await deBBS.getThreadsByBoard(0)).length).to.equal(2);
 
-      //There is no thread in board 1.
+      //There is no thread in board No.1.
       await deBBS.connect(addr1).createBoard(boardTitle, frontendOwner.address, { value: boardCreationFee });
       expect((await deBBS.getThreadsByBoard(1)).length).to.equal(0);
+
+    });
+
+    it("should work getPostsByThread", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      //There is one post in thread No.0.
+      expect((await deBBS.getPostsByThread(0)).length).to.equal(1);
+
+      //There is two post in thread No.0.
+      await deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: postCreationFee });
+      expect((await deBBS.getPostsByThread(0)).length).to.equal(2);
+
+      //There is no thread in thread No.1.
+      await deBBS.connect(addr1).createBoard(boardTitle, frontendOwner.address, { value: boardCreationFee });
+      await deBBS.connect(addr1).createThread(1, threadTitle, frontendOwner.address, { value: threadCreationFee });
+      expect((await deBBS.getPostsByThread(1)).length).to.equal(0);
 
     });
 
