@@ -7,6 +7,7 @@ import Table from "cli-table3";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
+import { formatEther } from "viem";
 
 export default function Home() {
     const { chain } = useAccount();
@@ -25,7 +26,11 @@ export default function Home() {
         args: [BigInt(String(boardId ? boardId : 0))],
     });
 
-    const createThreadFee = 0.0001;
+    const { data: createThreadFee } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "createThreadFee",
+        abi: deBbsAbi,
+    });
 
     const threadsResult = [
         {
@@ -66,7 +71,7 @@ export default function Home() {
         ...threadsResult.map(({ account, threadDescription, postCount }) => [
             account,
             threadDescription,
-            (Math.floor(createThreadFee * postCount * 10000) / 10000).toFixed(4).toString() + " ETH",
+            (Math.floor(Number(createThreadFee) * postCount * 10000) / 10000).toFixed(4).toString() + " ETH",
         ])
     );
     console.log(table.toString());
@@ -119,7 +124,7 @@ export default function Home() {
                                     Create A Thread!
                                 </Button>
                                 <Text fontSize={14} display="inline-block" mx={4} fontStyle="italic">
-                                    You have to pay {createThreadFee} ETH
+                                    You have to pay {formatEther(createThreadFee ? createThreadFee : BigInt(0))} ETH
                                 </Text>
                             </HStack>
                         </VStack>
