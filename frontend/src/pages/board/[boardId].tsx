@@ -29,22 +29,27 @@ import { Addresses } from "@/constants/Addresses";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
+import { useRouter } from "next/router";
 
 export default function Home() {
     const { chain } = useAccount();
-    const boardId = 0;
+
+    const router = useRouter();
+    const boardId = Number(router.query.boardId);
+    console.log("boardId", boardId);
+
     const { data: getBoardResult } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
         functionName: "getBoard",
         abi: deBbsAbi,
-        args: [BigInt(boardId)],
+        args: [BigInt(boardId ? boardId : 0)],
     });
 
     const { data: getThreadsByBoardResult, refetch: refetchGetThreadsByBoard } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
         abi: deBbsAbi,
         functionName: "getThreadsByBoard",
-        args: [BigInt(String(boardId ? boardId : 0))],
+        args: [BigInt(boardId ? boardId : 0)],
     });
 
     const { data: createThreadFee } = useReadContract({
@@ -52,50 +57,6 @@ export default function Home() {
         functionName: "createThreadFee",
         abi: deBbsAbi,
     });
-
-    const threadsResult = [
-        {
-            threadId: 0,
-            account: "great-security.eth",
-            threadDescription: "I made a special anti-fraud wallet, Pizza Wallet.",
-            postCount: 120,
-        },
-        {
-            threadId: 0,
-            account: "0xd3ef...ad823",
-            threadDescription: "Where can I get WBTC at better price?",
-            postCount: 21,
-        },
-        {
-            threadId: 0,
-            account: "house-boy.eth",
-            threadDescription: "I’m crypto bilionaire living with my mom",
-            postCount: 6,
-        },
-    ];
-
-    const table = new TableCLI({
-        head: ["Account", "Title", "Earned Fees"],
-        colWidths: [20, 60, 15],
-        chars: {
-            top: "",
-            "top-mid": "",
-            "top-left": "",
-            "top-right": "",
-            bottom: "",
-            "bottom-mid": "",
-            "bottom-left": "",
-            "bottom-right": "",
-        },
-    });
-    table.push(
-        ...threadsResult.map(({ account, threadDescription, postCount }) => [
-            account,
-            threadDescription,
-            (createThreadFee ? Number(formatEther(createThreadFee * BigInt(postCount))) : 0).toFixed(4).toString() + " ETH",
-        ])
-    );
-    console.log(table.toString());
 
     const recentPostsResult = [
         {
@@ -201,7 +162,7 @@ export default function Home() {
                                     <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
                                     <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[]}</Td>
                                 </Tr> */}
-                                <Tr w={400}>
+                                <Tr>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
                                         time created
                                     </Td>
@@ -239,7 +200,7 @@ export default function Home() {
                                     _loading={{
                                         _hover: {
                                             opacity: 0.75,
-                                            bgColor: { bgColor },
+                                            bgColor: primaryColor,
                                         },
                                     }}
                                 >
@@ -253,19 +214,40 @@ export default function Home() {
                     </FormControl>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
-                    <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize={11}>
-                        {table.toString()}
-                    </Text>
-                    <Text>
-                        {getThreadsByBoardResult &&
-                            getThreadsByBoardResult.map((thread, i) => (
-                                <li key={i}>
-                                    <Link as={NextLink} href={`/thread/${thread.threadId}`}>
-                                        {thread.threadTitle}
-                                    </Link>
-                                </li>
-                            ))}
-                    </Text>
+
+                    <TableContainer>
+                        <Table size="sm" w={500}>
+                            <Thead>
+                                <Tr>
+                                    <Th color={primaryColor}>moderator</Th>
+                                    <Th color={primaryColor}>title</Th>
+                                    <Th color={primaryColor}>earned fee</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody borderRight={`1px solid ${primaryColor}`}>
+                                {getThreadsByBoardResult &&
+                                    getThreadsByBoardResult.map((thread, i) => (
+                                        <Tr borderTop={`1px solid ${primaryColor}`} key={i}>
+                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                <Link as={NextLink} href={`/account/${thread.threadOwner}`}>
+                                                    {thread.threadOwner}
+                                                </Link>
+                                            </Td>
+                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
+                                                    {thread.threadTitle}
+                                                </Link>
+                                            </Td>
+                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
+                                                    threadFee here
+                                                </Link>
+                                            </Td>
+                                        </Tr>
+                                    ))}
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {recentPostsResult.map((post, i) => (
