@@ -1,24 +1,22 @@
 import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
 import {
+    Box,
     Button,
+    chakra,
     FormControl,
     HStack,
     Input,
-    Link,
     Table,
     TableContainer,
     Tbody,
     Td,
     Text,
-    Th,
-    Thead,
     Tr,
     useToast,
     VStack,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import NextLink from "next/link";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
@@ -29,56 +27,39 @@ import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
-import { ThreadTableRow } from "@/components/ThreadTableRow";
+import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
+import * as jdenticon from "jdenticon";
 
-export default function Board() {
+export default function Thread() {
     const { chain } = useAccount();
 
     const router = useRouter();
-    const boardId = Number(router.query.boardId);
-    console.log("boardId", boardId);
+    const threadId = Number(router.query.threadId);
+    console.log("threadId", threadId);
 
-    const { data: getBoardResult } = useReadContract({
+    const { data: getThreadResult } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
-        functionName: "getBoard",
+        functionName: "getThread",
         abi: deBbsAbi,
-        args: [BigInt(boardId ? boardId : 0)],
+        args: [BigInt(threadId ? threadId : 0)],
     });
-    console.log("getBoardResult", getBoardResult);
+    console.log("getThreadResult", getThreadResult);
 
-    const { data: getThreadsByBoardResult, refetch: refetchGetThreadsByBoard } = useReadContract({
+    const { data: getPostsByThreadResult, refetch: refetchGetPostsByThread } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
         abi: deBbsAbi,
-        functionName: "getThreadsByBoard",
-        args: [BigInt(boardId ? boardId : 0)],
-    });
-
-    const { data: createThreadFee } = useReadContract({
-        address: getDeBBSAddress(chain && chain.id),
-        functionName: "createThreadFee",
-        abi: deBbsAbi,
+        functionName: "getPostsByThread",
+        args: [BigInt(threadId ? threadId : 0)],
     });
 
-    const recentPostsResult = [
-        {
-            postId: 0,
-            account: "sbf.eth",
-            postContent: "I’ll buy as much as ETH has you have...",
-        },
-        {
-            postId: 0,
-            account: "0x92da1...2ed3a",
-            postContent: "Ethereum is so dead!!",
-        },
-        {
-            postId: 0,
-            account: "house-boy.eth",
-            postContent: "I made 200k buying vegetable tokens last year",
-        },
-    ];
+    const { data: createPostFee } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "createPostFee",
+        abi: deBbsAbi,
+    });
 
     const [formData, setFormData] = useState({
-        threadTitle: "",
+        postContent: "",
         frontendOwnerAddress: Addresses.frontendOwner,
     });
     console.log(formData);
@@ -95,27 +76,27 @@ export default function Board() {
         e.preventDefault();
         try {
             setIsTxWaiting(true);
-            const createThreadTx = await writeContract(wagmiConfig, {
+            const createPostTx = await writeContract(wagmiConfig, {
                 address: getDeBBSAddress(chain && chain.id),
                 abi: deBbsAbi,
-                functionName: "createThread",
-                args: [BigInt(boardId), formData.threadTitle, formData.frontendOwnerAddress],
-                value: BigInt(createThreadFee ? createThreadFee : BigInt(0)),
+                functionName: "createPost",
+                args: [BigInt(threadId), formData.postContent, formData.frontendOwnerAddress],
+                value: BigInt(createPostFee ? createPostFee : BigInt(0)),
             });
-            if (!createThreadTx) {
-                throw new Error("Create Thread Tx rejected");
+            if (!createPostTx) {
+                throw new Error("Create Post Tx rejected");
             }
-            console.log("txId: ", createThreadTx);
-            const createThreadReceipt = await waitForTransactionReceipt(wagmiConfig, {
-                hash: createThreadTx,
+            console.log("txId: ", createPostTx);
+            const createPostReceipt = await waitForTransactionReceipt(wagmiConfig, {
+                hash: createPostTx,
             });
-            if (createThreadReceipt.status === "reverted") {
-                throw new Error("Create Thread Tx failed");
+            if (createPostReceipt.status === "reverted") {
+                throw new Error("Create Post Tx failed");
             }
-            refetchGetThreadsByBoard();
+            refetchGetPostsByThread();
             toast({
-                title: "Create Thread Tx Success",
-                description: createThreadTx,
+                title: "Create Post Tx Success",
+                description: createPostTx,
                 status: "success",
                 variant: "subtle",
                 isClosable: true,
@@ -123,7 +104,7 @@ export default function Board() {
         } catch (e) {
             const errorMessage = e instanceof Error ? `${e.message}` : `${e}`;
             toast({
-                title: "Create Thread Tx Failed",
+                title: "Create Post Tx Failed",
                 description: errorMessage,
                 status: "error",
                 variant: "subtle",
@@ -137,6 +118,7 @@ export default function Board() {
     const primaryColor = "white";
     const bgColor = "#3355FF";
 
+    const Hr = chakra("hr");
     return (
         <>
             <Head>
@@ -146,7 +128,7 @@ export default function Board() {
             </Head>
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
-                    <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Board: ${getBoardResult && getBoardResult[2]}`}</BBSHeadingTitle>
+                    <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Thread: ${getThreadResult && getThreadResult[3]}`}</BBSHeadingTitle>
                     <TableContainer>
                         <Table size="sm" w={500}>
                             <Tbody borderRight={`1px solid ${primaryColor}`}>
@@ -155,62 +137,41 @@ export default function Board() {
                                         moderator
                                     </Td>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                        {getBoardResult && getBoardResult[1]}
+                                        {getThreadResult && getThreadResult[2]}
                                     </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[2]}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
                                         time created
                                     </Td>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                        {getBoardResult && convertTimestampToLocalTime(Number(getBoardResult[3].toString()))}
+                                        {getThreadResult && convertTimestampToLocalTime(Number(getThreadResult[4].toString()))}
                                     </Td>
                                 </Tr>
                             </Tbody>
                         </Table>
                     </TableContainer>
 
-                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
-
-                    <TableContainer>
-                        <Table size="sm">
-                            <Thead>
-                                <Tr>
-                                    <Th color={primaryColor}>moderator</Th>
-                                    <Th color={primaryColor}>title</Th>
-                                    <Th color={primaryColor}>earned fee</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody borderRight={`1px solid ${primaryColor}`}>
-                                {getThreadsByBoardResult &&
-                                    getThreadsByBoardResult.map((thread, i) => (
-                                        <ThreadTableRow
-                                            threadOwner={thread.threadOwner}
-                                            threadId={thread.threadId}
-                                            threadTitle={thread.threadTitle}
-                                            createThreadFee={createThreadFee ? createThreadFee : BigInt(0)}
-                                            key={i}
-                                        />
-                                    ))}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
-
-                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                    {recentPostsResult.map((post, i) => (
-                        <Text key={i}>
-                            <Link as={NextLink} href={`/account/${post.account}`}>
-                                [{post.account}]
-                            </Link>{" "}
-                            <Link as={NextLink} href={`/post/${post.postId}`}>
-                                {post.postContent}
-                            </Link>
-                        </Text>
-                    ))}
+                    <Hr borderStyle="dashed" my={2} />
+                    {getPostsByThreadResult &&
+                        getPostsByThreadResult.map((post, i) => {
+                            const svgString = jdenticon.toSvg(post.postOwner, 20);
+                            return (
+                                <Box key={i}>
+                                    <HStack align="start">
+                                        <Box border={`1px solid ${primaryColor}`}>
+                                            <Box w={5} h={5} dangerouslySetInnerHTML={{ __html: svgString }}></Box>
+                                        </Box>
+                                        <Text>
+                                            <EnsNameOrAddress address={post.postOwner} shorten />
+                                        </Text>
+                                    </HStack>
+                                    <Text>{post.postContent}</Text>
+                                    <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
+                                    <Hr borderStyle="dashed" my={2} />
+                                </Box>
+                            );
+                        })}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
@@ -223,8 +184,8 @@ export default function Board() {
                                 placeholder="Thread Title"
                                 _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
                                 isRequired
-                                name="threadTitle"
-                                value={formData.threadTitle}
+                                name="postContent"
+                                value={formData.postContent}
                                 onChange={handleChange}
                             />
                             <HStack>
@@ -242,10 +203,10 @@ export default function Board() {
                                         },
                                     }}
                                 >
-                                    Create A Thread!
+                                    Create A Post!
                                 </Button>
                                 <Text fontSize={14} display="inline-block" mx={4} fontStyle="italic">
-                                    You have to pay {formatEther(createThreadFee ? createThreadFee : BigInt(0))} ETH
+                                    You have to pay {formatEther(createPostFee ? createPostFee : BigInt(0))} ETH
                                 </Text>
                             </HStack>
                         </VStack>

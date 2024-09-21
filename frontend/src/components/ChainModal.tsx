@@ -24,11 +24,11 @@ export const ChainModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            <ModalContent w={300} bgColor={bgColor} color={primaryColor} border={`2px ${primaryColor} solid`}>
+            <ModalContent w={400} bgColor={bgColor} color={primaryColor} border={`2px ${primaryColor} solid`}>
                 <ModalHeader>Select Chain</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <VStack w={200} margin="0 auto">
+                    <VStack w={300} margin="0 auto">
                         {chains.map((chain, i) => (
                             <BBSHeadingButton
                                 buttonProps={{
