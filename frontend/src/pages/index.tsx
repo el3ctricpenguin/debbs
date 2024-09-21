@@ -44,7 +44,7 @@ const query = `{
     threadTitle
     timestamp
   }
-  postCreateds(orderBy: timestamp, orderDirection: desc) {
+  postCreateds(orderBy: timestamp, orderDirection: desc, where: {isDeleted: false}) {
     postId
     parentThreadId
     postOwner
