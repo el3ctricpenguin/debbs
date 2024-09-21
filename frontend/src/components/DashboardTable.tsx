@@ -5,7 +5,7 @@ import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { useAccount } from "wagmi";
 import { formatEther } from "viem";
 
-export function DashboardTable({ totalFees }: { totalFees?: bigint }) {
+export function DashboardTable({ totalFees, userCount }: { totalFees?: bigint; userCount: number }) {
     const colors = useContext(ColorsContext);
     const primaryColor = colors[0];
     // const bgColor = colors[1];
@@ -36,7 +36,7 @@ export function DashboardTable({ totalFees }: { totalFees?: bigint }) {
                             total users
                         </Td>
                         <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
-                            7
+                            {userCount}
                         </Td>
                     </Tr>
                     <Tr borderTop={`1px solid ${primaryColor}`}>

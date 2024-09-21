@@ -44,7 +44,7 @@ const query = `{
     threadTitle
     timestamp
   }
-  postCreateds(first: 3, orderBy: timestamp, orderDirection: desc) {
+  postCreateds(orderBy: timestamp, orderDirection: desc) {
     postId
     parentThreadId
     postOwner
@@ -129,6 +129,8 @@ export default function Home() {
     const recentThreadsResult = theGraphResult && theGraphResult.data.threadCreateds;
     const recentPostsResult = theGraphResult && theGraphResult.data.postCreateds;
 
+    const userCount = recentPostsResult ? new Set(recentPostsResult.map((post) => post.postOwner)).size : 0;
+
     const primaryColor = getDefaultPrimaryColor(chain && chain.id);
     const bgColor = getDefaultBgColor(chain && chain.id);
 
@@ -208,7 +210,7 @@ export default function Home() {
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
                     <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Dashboard: Welcome to deBBS`}</BBSHeadingTitle>
-                    <DashboardTable totalFees={totalFees} />
+                    <DashboardTable totalFees={totalFees} userCount={userCount} />
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Boards</BBSHeading>
                     <TableContainer>
@@ -278,29 +280,37 @@ export default function Home() {
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
                     {recentThreadsResult &&
-                        recentThreadsResult.map((thread, i) => (
-                            <Text key={i}>
-                                <Link as={NextLink} href={`/user/${thread.threadOwner}`}>
-                                    [<EnsNameOrAddress address={getAddress(thread.threadOwner)} shorten />]
-                                </Link>{" "}
-                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
-                                    {thread.threadTitle}
-                                </Link>
-                            </Text>
-                        ))}
+                        recentThreadsResult.map((thread, i) =>
+                            i < 3 ? (
+                                <Text key={i} isTruncated>
+                                    <Link as={NextLink} href={`/user/${thread.threadOwner}`}>
+                                        [<EnsNameOrAddress address={getAddress(thread.threadOwner)} shorten />]
+                                    </Link>{" "}
+                                    <Link as={NextLink} href={`/thread/${thread.threadId}`}>
+                                        {thread.threadTitle}
+                                    </Link>
+                                </Text>
+                            ) : (
+                                <></>
+                            )
+                        )}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {recentPostsResult &&
-                        recentPostsResult.map((post, i) => (
-                            <Text key={i}>
-                                <Link as={NextLink} href={`/user/${post.postOwner}`}>
-                                    [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
-                                </Link>{" "}
-                                <Link as={NextLink} href={`/thread/${post.parentThreadId}`}>
-                                    {post.postContent}
-                                </Link>
-                            </Text>
-                        ))}
+                        recentPostsResult.map((post, i) =>
+                            i < 3 ? (
+                                <Text key={i} isTruncated>
+                                    <Link as={NextLink} href={`/user/${post.postOwner}`}>
+                                        [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
+                                    </Link>{" "}
+                                    <Link as={NextLink} href={`/thread/${post.parentThreadId}`}>
+                                        {post.postContent}
+                                    </Link>
+                                </Text>
+                            ) : (
+                                <></>
+                            )
+                        )}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Board</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
