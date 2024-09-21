@@ -38,6 +38,10 @@ contract deBBS {
     uint256 public createThreadFee;
     uint256 public createPostFee;
 
+    event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, uint256 timestamp);
+    event ThreadCreated(uint256 threadId, address threadOwner, string threadTitle, uint256 parentBoardId, uint256 timestamp);
+    event PostCreated(uint256 postId, address postOwner, string postContent, uint256 parentThreadId, uint256 timestamp);
+
     mapping(uint256 => uint256[]) public boardToThreads; 
     mapping(uint256 => uint256[]) public threadToPosts; 
 
@@ -69,6 +73,7 @@ contract deBBS {
         }));
 
         _sendCreateBoardFeeToFrontendOwner(frontendOwnerAddress);
+        emit BoardCreated(boardId, msg.sender, boardTitle, block.timestamp);
 
     }
 
@@ -87,6 +92,7 @@ contract deBBS {
 
         boardToThreads[boardId].push(threadId);
         _sendCreateThreadFeeToBoardOwner(boardId, frontendOwnerAddress);
+        emit ThreadCreated(threadId, msg.sender, threadTitle, boardId, block.timestamp);
     }
 
     function createPost(uint256 threadId, string memory postContent, address frontendOwnerAddress) public payable {
@@ -104,6 +110,7 @@ contract deBBS {
 
         threadToPosts[threadId].push(postId);
         _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
+        emit PostCreated(postId, msg.sender, postContent, threadId, block.timestamp);
     }
 
     function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {
