@@ -152,7 +152,7 @@ export default function Thread() {
                                 w={450}
                                 border={`2px ${primaryColor} solid`}
                                 bgColor={bgColor}
-                                placeholder="Thread Title"
+                                placeholder="Message"
                                 _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
                                 isRequired
                                 name="postContent"
@@ -166,7 +166,7 @@ export default function Thread() {
                                     color={bgColor}
                                     type="submit"
                                     isLoading={isTxWaiting}
-                                    loadingText="Creating A Thread..."
+                                    loadingText="Creating A Post..."
                                     _loading={{
                                         _hover: {
                                             opacity: 0.75,
