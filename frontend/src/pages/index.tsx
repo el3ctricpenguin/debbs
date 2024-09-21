@@ -1,22 +1,22 @@
 import { BBSHeading } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
+import { getDeBBSAddress } from "@/constants/ContractAddresses";
+import { deBbsAbi } from "@/generated";
 import { chakra, Link, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
+import { useAccount, useReadContract } from "wagmi";
 
 const primaryColor = "#fff";
 const bgColor = "#335CFF";
 
 export default function Home() {
-    const boardsResult = [
-        { boardTitle: "Ethereum", boardId: 0 },
-        { boardTitle: "DeFi", boardId: 0 },
-        { boardTitle: "Trading", boardId: 0 },
-        { boardTitle: "NFT", boardId: 0 },
-        { boardTitle: "Prediction Market", boardId: 0 },
-        { boardTitle: "GameFi", boardId: 0 },
-        { boardTitle: "Wallet Security", boardId: 0 },
-    ];
+    const { chain } = useAccount();
+    const { data: getBoardsResult } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "getBoards",
+        abi: deBbsAbi,
+    });
 
     const recentThreadsResult = [
         {
@@ -66,14 +66,15 @@ export default function Home() {
                 <>
                     <BBSHeading headingProps={{ mb: 2 }}>&gt; Boards</BBSHeading>
                     <Text>
-                        {boardsResult.map((board, i) => (
-                            <>
-                                {i == 0 ? "" : " / "}
-                                <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
-                                    {board.boardTitle}
-                                </Link>
-                            </>
-                        ))}
+                        {getBoardsResult &&
+                            getBoardsResult.map((board, i) => (
+                                <>
+                                    {i == 0 ? "" : " / "}
+                                    <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
+                                        {board.boardTitle}
+                                    </Link>
+                                </>
+                            ))}
                     </Text>
                     <Text>[See More]</Text>
                     <Hr borderStyle="dashed" my={2} />
