@@ -1,0 +1,490 @@
+[
+  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "boardId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "boardOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "boardTitle",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "BoardCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "postIdFrom",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "postIdTo",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "mentionFrom",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "mentionTo",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "replyContent",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "parentThreadId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "Mention",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "postId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "postOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "postContent",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "parentThreadId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "PostCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "threadId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "threadOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "threadTitle",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "parentBoardId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "ThreadCreated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "threadId", "type": "uint256" },
+      {
+        "internalType": "address",
+        "name": "targetUserToBan",
+        "type": "address"
+      }
+    ],
+    "name": "banUser",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "boardToThreads",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "boards",
+    "outputs": [
+      { "internalType": "uint256", "name": "boardId", "type": "uint256" },
+      { "internalType": "address", "name": "boardOwner", "type": "address" },
+      { "internalType": "string", "name": "boardTitle", "type": "string" },
+      { "internalType": "string", "name": "description", "type": "string" },
+      { "internalType": "string", "name": "primaryColor", "type": "string" },
+      { "internalType": "string", "name": "bgColor", "type": "string" },
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "boardTitle", "type": "string" },
+      { "internalType": "string", "name": "description", "type": "string" },
+      { "internalType": "string", "name": "primaryColor", "type": "string" },
+      { "internalType": "string", "name": "bgColor", "type": "string" },
+      {
+        "internalType": "address",
+        "name": "frontendOwnerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "createBoard",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "createBoardFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "threadId", "type": "uint256" },
+      { "internalType": "uint256", "name": "mentionTo", "type": "uint256" },
+      { "internalType": "string", "name": "postContent", "type": "string" },
+      {
+        "internalType": "address",
+        "name": "frontendOwnerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "createPost",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "createPostFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "boardId", "type": "uint256" },
+      { "internalType": "string", "name": "threadTitle", "type": "string" },
+      {
+        "internalType": "address",
+        "name": "frontendOwnerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "createThread",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "createThreadFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "postId", "type": "uint256" }
+    ],
+    "name": "deletePost",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "boardId", "type": "uint256" }
+    ],
+    "name": "getBoard",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getBoards",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "boardId", "type": "uint256" },
+          {
+            "internalType": "address",
+            "name": "boardOwner",
+            "type": "address"
+          },
+          { "internalType": "string", "name": "boardTitle", "type": "string" },
+          { "internalType": "string", "name": "description", "type": "string" },
+          {
+            "internalType": "string",
+            "name": "primaryColor",
+            "type": "string"
+          },
+          { "internalType": "string", "name": "bgColor", "type": "string" },
+          { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+        ],
+        "internalType": "struct deBBS.Board[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "postId", "type": "uint256" }
+    ],
+    "name": "getPost",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "bool", "name": "", "type": "bool" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "threadId", "type": "uint256" }
+    ],
+    "name": "getPostsByThread",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "postId", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "parentThreadId",
+            "type": "uint256"
+          },
+          { "internalType": "address", "name": "postOwner", "type": "address" },
+          { "internalType": "string", "name": "postContent", "type": "string" },
+          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+          { "internalType": "bool", "name": "isDeleted", "type": "bool" },
+          { "internalType": "uint256", "name": "mentionTo", "type": "uint256" }
+        ],
+        "internalType": "struct deBBS.Post[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPostsCount",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "threadId", "type": "uint256" }
+    ],
+    "name": "getPostsCountByThread",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "threadId", "type": "uint256" }
+    ],
+    "name": "getThread",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "string", "name": "", "type": "string" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "boardId", "type": "uint256" }
+    ],
+    "name": "getThreadsByBoard",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "threadId", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "parentBoardId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "threadOwner",
+            "type": "address"
+          },
+          { "internalType": "string", "name": "threadTitle", "type": "string" },
+          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+          {
+            "internalType": "address[]",
+            "name": "bannedUsers",
+            "type": "address[]"
+          }
+        ],
+        "internalType": "struct deBBS.Thread[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "boardId", "type": "uint256" }
+    ],
+    "name": "getThreadsCountByBoard",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "threadId", "type": "uint256" },
+      { "internalType": "address", "name": "userAddress", "type": "address" }
+    ],
+    "name": "isAddressBanned",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "posts",
+    "outputs": [
+      { "internalType": "uint256", "name": "postId", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "parentThreadId",
+        "type": "uint256"
+      },
+      { "internalType": "address", "name": "postOwner", "type": "address" },
+      { "internalType": "string", "name": "postContent", "type": "string" },
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+      { "internalType": "bool", "name": "isDeleted", "type": "bool" },
+      { "internalType": "uint256", "name": "mentionTo", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "threadToPosts",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "threads",
+    "outputs": [
+      { "internalType": "uint256", "name": "threadId", "type": "uint256" },
+      { "internalType": "uint256", "name": "parentBoardId", "type": "uint256" },
+      { "internalType": "address", "name": "threadOwner", "type": "address" },
+      { "internalType": "string", "name": "threadTitle", "type": "string" },
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
