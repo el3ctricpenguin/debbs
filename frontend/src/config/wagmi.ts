@@ -9,7 +9,7 @@ export const wagmiConfig = createConfig({
         [mainnet.id]: http(),
         [sepolia.id]: http("https://ethereum-sepolia-rpc.publicnode.com"),
         [lineaSepolia.id]: http(),
-        [rootstockTestnet.id]: http(),
+        [rootstockTestnet.id]: http("https://rpc.testnet.rootstock.io/JgLubSnnXzEWYl6urSm2oMgN9QGNfD-T"),
         [morphHolesky.id]: http(),
     },
     ssr: true,
