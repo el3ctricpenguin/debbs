@@ -1,21 +1,6 @@
 import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import {
-    Box,
-    Button,
-    chakra,
-    FormControl,
-    HStack,
-    Input,
-    Table,
-    TableContainer,
-    Tbody,
-    Td,
-    Text,
-    Tr,
-    useToast,
-    VStack,
-} from "@chakra-ui/react";
+import { Button, chakra, FormControl, HStack, Input, Table, TableContainer, Tbody, Td, Text, Tr, useToast, VStack } from "@chakra-ui/react";
 import Head from "next/head";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
@@ -27,8 +12,7 @@ import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
-import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
-import * as jdenticon from "jdenticon";
+import Post from "@/components/Post";
 
 export default function Thread() {
     const { chain } = useAccount();
@@ -80,7 +64,12 @@ export default function Thread() {
                 address: getDeBBSAddress(chain && chain.id),
                 abi: deBbsAbi,
                 functionName: "createPost",
-                args: [BigInt(threadId), formData.postContent, formData.frontendOwnerAddress],
+                args: [
+                    BigInt(threadId),
+                    BigInt(getPostsByThreadResult ? getPostsByThreadResult.length : Infinity),
+                    formData.postContent,
+                    formData.frontendOwnerAddress,
+                ],
                 value: BigInt(createPostFee ? createPostFee : BigInt(0)),
             });
             if (!createPostTx) {
@@ -122,7 +111,7 @@ export default function Thread() {
     return (
         <>
             <Head>
-                <title>&gt;&gt;deBBS | Board</title>
+                <title>&gt;&gt;deBBS | Thread: {getThreadResult && getThreadResult[3]}</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -153,25 +142,7 @@ export default function Thread() {
                     </TableContainer>
 
                     <Hr borderStyle="dashed" my={2} />
-                    {getPostsByThreadResult &&
-                        getPostsByThreadResult.map((post, i) => {
-                            const svgString = jdenticon.toSvg(post.postOwner, 20);
-                            return (
-                                <Box key={i}>
-                                    <HStack align="start">
-                                        <Box border={`1px solid ${primaryColor}`}>
-                                            <Box w={5} h={5} dangerouslySetInnerHTML={{ __html: svgString }}></Box>
-                                        </Box>
-                                        <Text>
-                                            <EnsNameOrAddress address={post.postOwner} shorten />
-                                        </Text>
-                                    </HStack>
-                                    <Text>{post.postContent}</Text>
-                                    <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
-                                    <Hr borderStyle="dashed" my={2} />
-                                </Box>
-                            );
-                        })}
+                    {getPostsByThreadResult && getPostsByThreadResult.map((post, i) => <Post key={i} post={post} />)}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
@@ -181,7 +152,7 @@ export default function Thread() {
                                 w={450}
                                 border={`2px ${primaryColor} solid`}
                                 bgColor={bgColor}
-                                placeholder="Thread Title"
+                                placeholder="Message"
                                 _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
                                 isRequired
                                 name="postContent"
@@ -195,7 +166,7 @@ export default function Thread() {
                                     color={bgColor}
                                     type="submit"
                                     isLoading={isTxWaiting}
-                                    loadingText="Creating A Thread..."
+                                    loadingText="Creating A Post..."
                                     _loading={{
                                         _hover: {
                                             opacity: 0.75,

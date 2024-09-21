@@ -33,7 +33,7 @@ export function ThreadTableRow({
     return (
         <Tr borderTop={`1px solid ${primaryColor}`}>
             <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                <Link as={NextLink} href={`/account/${threadOwner}`}>
+                <Link as={NextLink} href={`/user/${threadOwner}`}>
                     <EnsNameOrAddress address={threadOwner} shorten />
                 </Link>
             </Td>
