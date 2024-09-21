@@ -150,6 +150,10 @@ contract deBBS {
         );
     }
 
+    function getBoards() public view returns (Board[] memory) {
+        return boards;
+    }
+
     function getThread(uint256 threadId) public view returns (
         uint256,
         address,
@@ -165,6 +169,22 @@ contract deBBS {
         );
     }
 
+    function getThreadsByBoard(uint256 boardId) public view returns (Thread[] memory) {
+        uint256[] memory targetThreads = boardToThreads[boardId];
+        Thread[] memory threadsByBoard = new Thread[](targetThreads.length);
+
+        for (uint256 i = 0; i < targetThreads.length; i++) {
+            Thread memory thread = threads[targetThreads[i]];
+            threadsByBoard[i] = thread;
+        }
+
+        return threadsByBoard;
+    }
+
+    function getThreadsCountByBoard(uint boardId) public view returns (uint256) {
+        return boardToThreads[boardId].length;
+    }
+
     function getPost(uint256 postId) public view returns (
         uint256,
         address,
@@ -178,6 +198,22 @@ contract deBBS {
             post.postContent,
             post.timestamp
         );
+    }
+
+    function getPostsByThread(uint256 threadId) public view returns (Post[] memory) {
+        uint256[] memory targetPosts = threadToPosts[threadId];
+        Post[] memory postsByThread = new Post[](targetPosts.length);
+
+        for (uint256 i = 0; i < targetPosts.length; i++) {
+            Post memory post = posts[targetPosts[i]];
+            postsByThread[i] = post;
+        }
+
+        return postsByThread;
+    }
+
+    function getPostsCountByThread(uint threadId) public view returns (uint256) {
+        return threadToPosts[threadId].length;
     }
 
 }
