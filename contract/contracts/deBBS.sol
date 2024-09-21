@@ -169,6 +169,22 @@ contract deBBS {
         );
     }
 
+    function getThreadsByBoard(uint256 boardId) public view returns (Thread[] memory) {
+        uint256[] memory targetThreads = boardToThreads[boardId];
+        Thread[] memory threadsByBoard = new Thread[](targetThreads.length);
+
+        for (uint256 i = 0; i < targetThreads.length; i++) {
+            Thread memory thread = threads[targetThreads[i]];
+            threadsByBoard[i] = thread;
+        }
+
+        return threadsByBoard;
+    }
+
+    function getThreadsCountByBoard(uint boardId) public view returns (uint256) {
+        return boardToThreads[boardId].length;
+    }
+
     function getPost(uint256 postId) public view returns (
         uint256,
         address,

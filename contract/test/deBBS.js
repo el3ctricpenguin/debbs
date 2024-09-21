@@ -146,4 +146,23 @@ describe("deBBS Tests", function () {
 
   });
 
+  describe("View Function Tests", function () {
+    it("should work getThreadsByBoard", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      //There is one thread in board 0.
+      expect((await deBBS.getThreadsByBoard(0)).length).to.equal(1);
+
+      //There is two thread in board 0.
+      await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
+      expect((await deBBS.getThreadsByBoard(0)).length).to.equal(2);
+
+      //There is no thread in board 1.
+      await deBBS.connect(addr1).createBoard(boardTitle, frontendOwner.address, { value: boardCreationFee });
+      expect((await deBBS.getThreadsByBoard(1)).length).to.equal(0);
+
+    });
+
+  });
+
 });
