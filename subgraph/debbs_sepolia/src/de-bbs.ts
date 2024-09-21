@@ -18,6 +18,9 @@ export function handleBoardCreated(event: BoardCreatedEvent): void {
   entity.boardId = event.params.boardId
   entity.boardOwner = event.params.boardOwner
   entity.boardTitle = event.params.boardTitle
+  entity.description = event.params.description
+  entity.primaryColor = event.params.primaryColor
+  entity.bgColor = event.params.bgColor
   entity.timestamp = event.params.timestamp
 
   entity.blockNumber = event.block.number
@@ -51,10 +54,12 @@ export function handlePostCreated(event: PostCreatedEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.postId = event.params.postId
+  entity.parentThreadId = event.params.parentThreadId
   entity.postOwner = event.params.postOwner
   entity.postContent = event.params.postContent
-  entity.parentThreadId = event.params.parentThreadId
   entity.timestamp = event.params.timestamp
+  entity.isDeleted = event.params.isDeleted
+  entity.mentionTo = event.params.mentionTo
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -68,9 +73,9 @@ export function handleThreadCreated(event: ThreadCreatedEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.threadId = event.params.threadId
+  entity.parentBoardId = event.params.parentBoardId
   entity.threadOwner = event.params.threadOwner
   entity.threadTitle = event.params.threadTitle
-  entity.parentBoardId = event.params.parentBoardId
   entity.timestamp = event.params.timestamp
 
   entity.blockNumber = event.block.number

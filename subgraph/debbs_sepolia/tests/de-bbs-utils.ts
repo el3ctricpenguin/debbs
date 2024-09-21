@@ -11,6 +11,9 @@ export function createBoardCreatedEvent(
   boardId: BigInt,
   boardOwner: Address,
   boardTitle: string,
+  description: string,
+  primaryColor: string,
+  bgColor: string,
   timestamp: BigInt
 ): BoardCreated {
   let boardCreatedEvent = changetype<BoardCreated>(newMockEvent())
@@ -31,6 +34,21 @@ export function createBoardCreatedEvent(
   )
   boardCreatedEvent.parameters.push(
     new ethereum.EventParam("boardTitle", ethereum.Value.fromString(boardTitle))
+  )
+  boardCreatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "description",
+      ethereum.Value.fromString(description)
+    )
+  )
+  boardCreatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "primaryColor",
+      ethereum.Value.fromString(primaryColor)
+    )
+  )
+  boardCreatedEvent.parameters.push(
+    new ethereum.EventParam("bgColor", ethereum.Value.fromString(bgColor))
   )
   boardCreatedEvent.parameters.push(
     new ethereum.EventParam(
@@ -100,10 +118,12 @@ export function createMentionEvent(
 
 export function createPostCreatedEvent(
   postId: BigInt,
+  parentThreadId: BigInt,
   postOwner: Address,
   postContent: string,
-  parentThreadId: BigInt,
-  timestamp: BigInt
+  timestamp: BigInt,
+  isDeleted: boolean,
+  mentionTo: BigInt
 ): PostCreated {
   let postCreatedEvent = changetype<PostCreated>(newMockEvent())
 
@@ -111,6 +131,12 @@ export function createPostCreatedEvent(
 
   postCreatedEvent.parameters.push(
     new ethereum.EventParam("postId", ethereum.Value.fromUnsignedBigInt(postId))
+  )
+  postCreatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "parentThreadId",
+      ethereum.Value.fromUnsignedBigInt(parentThreadId)
+    )
   )
   postCreatedEvent.parameters.push(
     new ethereum.EventParam("postOwner", ethereum.Value.fromAddress(postOwner))
@@ -123,14 +149,17 @@ export function createPostCreatedEvent(
   )
   postCreatedEvent.parameters.push(
     new ethereum.EventParam(
-      "parentThreadId",
-      ethereum.Value.fromUnsignedBigInt(parentThreadId)
+      "timestamp",
+      ethereum.Value.fromUnsignedBigInt(timestamp)
     )
   )
   postCreatedEvent.parameters.push(
+    new ethereum.EventParam("isDeleted", ethereum.Value.fromBoolean(isDeleted))
+  )
+  postCreatedEvent.parameters.push(
     new ethereum.EventParam(
-      "timestamp",
-      ethereum.Value.fromUnsignedBigInt(timestamp)
+      "mentionTo",
+      ethereum.Value.fromUnsignedBigInt(mentionTo)
     )
   )
 
@@ -139,9 +168,9 @@ export function createPostCreatedEvent(
 
 export function createThreadCreatedEvent(
   threadId: BigInt,
+  parentBoardId: BigInt,
   threadOwner: Address,
   threadTitle: string,
-  parentBoardId: BigInt,
   timestamp: BigInt
 ): ThreadCreated {
   let threadCreatedEvent = changetype<ThreadCreated>(newMockEvent())
@@ -156,6 +185,12 @@ export function createThreadCreatedEvent(
   )
   threadCreatedEvent.parameters.push(
     new ethereum.EventParam(
+      "parentBoardId",
+      ethereum.Value.fromUnsignedBigInt(parentBoardId)
+    )
+  )
+  threadCreatedEvent.parameters.push(
+    new ethereum.EventParam(
       "threadOwner",
       ethereum.Value.fromAddress(threadOwner)
     )
@@ -164,12 +199,6 @@ export function createThreadCreatedEvent(
     new ethereum.EventParam(
       "threadTitle",
       ethereum.Value.fromString(threadTitle)
-    )
-  )
-  threadCreatedEvent.parameters.push(
-    new ethereum.EventParam(
-      "parentBoardId",
-      ethereum.Value.fromUnsignedBigInt(parentBoardId)
     )
   )
   threadCreatedEvent.parameters.push(
