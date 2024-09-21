@@ -9,6 +9,9 @@ contract deBBS {
         uint256 boardId;
         address boardOwner;
         string boardTitle;
+        string description;
+        string primaryColor;
+        string bgColor;
         uint256 timestamp;
     }
 
@@ -44,7 +47,13 @@ contract deBBS {
         createPostFee = 0.0001 ether;
     }
 
-    function createBoard(string memory boardTitle, address frontendOwnerAddress) public payable {
+    function createBoard(
+        string memory boardTitle,
+        string memory description,
+        string memory primaryColor,
+        string memory bgColor,
+        address frontendOwnerAddress
+    ) public payable {
         require(msg.value == createBoardFee, "You should pay correct fee to create a board.");
         
         uint256 boardId = boards.length;
@@ -53,6 +62,9 @@ contract deBBS {
             boardId: boardId,
             boardOwner: msg.sender,
             boardTitle: boardTitle,
+            description: description,
+            primaryColor: primaryColor,
+            bgColor: bgColor,
             timestamp: block.timestamp
         }));
 
