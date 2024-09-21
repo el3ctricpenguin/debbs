@@ -42,7 +42,7 @@ contract deBBS {
     uint256 public createPostFee;
 
     event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, string description, string primaryColor, string bgColor, uint256 timestamp);
-    event ThreadCreated(uint256 threadId, uint256 parentBoardId, address threadOwner, string threadTitle, uint256 timestamp, address[] bannedUsers);
+    event ThreadCreated(uint256 threadId, uint256 parentBoardId, address threadOwner, string threadTitle, uint256 timestamp);
     event PostCreated(uint256 postId, uint256 parentThreadId, address postOwner, string postContent, uint256 timestamp, bool isDeleted, uint256 mentionTo);
     event Mention(uint256 postIdFrom, uint256 postIdTo, address mentionFrom, address mentionTo, string replyContent, uint256 parentThreadId, uint256 timestamp);
 
@@ -98,7 +98,7 @@ contract deBBS {
 
         boardToThreads[boardId].push(threadId);
         _sendCreateThreadFeeToBoardOwner(boardId, frontendOwnerAddress);
-        emit ThreadCreated(threadId, boardId, msg.sender, threadTitle, block.timestamp, new address[](0));
+        emit ThreadCreated(threadId, boardId, msg.sender, threadTitle, block.timestamp);
     }
 
     function createPost(uint256 threadId, uint256 mentionTo, string memory postContent, address frontendOwnerAddress) public payable {
