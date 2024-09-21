@@ -1,6 +1,21 @@
 import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { Button, FormControl, HStack, Input, Table, TableContainer, Tbody, Td, Text, Tr, useToast, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    chakra,
+    FormControl,
+    HStack,
+    Input,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Text,
+    Tr,
+    useToast,
+    VStack,
+} from "@chakra-ui/react";
 import Head from "next/head";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
@@ -12,6 +27,8 @@ import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
+import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
+import * as jdenticon from "jdenticon";
 
 export default function Thread() {
     const { chain } = useAccount();
@@ -101,6 +118,7 @@ export default function Thread() {
     const primaryColor = "white";
     const bgColor = "#3355FF";
 
+    const Hr = chakra("hr");
     return (
         <>
             <Head>
@@ -133,6 +151,27 @@ export default function Thread() {
                             </Tbody>
                         </Table>
                     </TableContainer>
+
+                    <Hr borderStyle="dashed" my={2} />
+                    {getPostsByThreadResult &&
+                        getPostsByThreadResult.map((post, i) => {
+                            const svgString = jdenticon.toSvg(post.postOwner, 20);
+                            return (
+                                <Box key={i}>
+                                    <HStack align="start">
+                                        <Box border={`1px solid ${primaryColor}`}>
+                                            <Box w={5} h={5} dangerouslySetInnerHTML={{ __html: svgString }}></Box>
+                                        </Box>
+                                        <Text>
+                                            <EnsNameOrAddress address={post.postOwner} shorten />
+                                        </Text>
+                                    </HStack>
+                                    <Text>{post.postContent}</Text>
+                                    <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
+                                    <Hr borderStyle="dashed" my={2} />
+                                </Box>
+                            );
+                        })}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
