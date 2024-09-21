@@ -47,7 +47,6 @@ type ThreadCreated @entity(immutable: true) {
   threadOwner: Bytes! # address
   threadTitle: String! # string
   timestamp: BigInt! # uint256
-  bannedUsers: [Bytes!]! # address[]
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

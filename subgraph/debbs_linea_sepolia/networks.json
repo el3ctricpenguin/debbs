@@ -1,8 +1,8 @@
 {
   "linea-sepolia": {
     "deBBS": {
-      "address": "0x2A7c33C814FDB671EafD1269c989ef4d51BE966E",
-      "startBlock": 3836586
+      "address": "0x86fAE1E990d1D5E96a199F6f797Ae7F144b420E9",
+      "startBlock": 3836707
     }
   }
 }

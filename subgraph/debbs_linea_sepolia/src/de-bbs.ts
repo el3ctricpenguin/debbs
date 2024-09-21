@@ -77,7 +77,6 @@ export function handleThreadCreated(event: ThreadCreatedEvent): void {
   entity.threadOwner = event.params.threadOwner
   entity.threadTitle = event.params.threadTitle
   entity.timestamp = event.params.timestamp
-  entity.bannedUsers = event.params.bannedUsers
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

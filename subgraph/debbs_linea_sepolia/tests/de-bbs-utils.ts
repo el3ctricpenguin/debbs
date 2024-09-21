@@ -171,8 +171,7 @@ export function createThreadCreatedEvent(
   parentBoardId: BigInt,
   threadOwner: Address,
   threadTitle: string,
-  timestamp: BigInt,
-  bannedUsers: Array<Address>
+  timestamp: BigInt
 ): ThreadCreated {
   let threadCreatedEvent = changetype<ThreadCreated>(newMockEvent())
 
@@ -206,12 +205,6 @@ export function createThreadCreatedEvent(
     new ethereum.EventParam(
       "timestamp",
       ethereum.Value.fromUnsignedBigInt(timestamp)
-    )
-  )
-  threadCreatedEvent.parameters.push(
-    new ethereum.EventParam(
-      "bannedUsers",
-      ethereum.Value.fromAddressArray(bannedUsers)
     )
   )
 
