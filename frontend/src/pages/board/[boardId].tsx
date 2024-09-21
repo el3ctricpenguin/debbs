@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Addresses } from "@/constants/Addresses";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
+import { tr } from "framer-motion/client";
 
 export default function Home() {
     const { chain } = useAccount();
@@ -110,10 +111,12 @@ export default function Home() {
         });
     };
 
+    const [isTxWaiting, setIsTxWaiting] = useState(false);
     const toast = useToast();
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            setIsTxWaiting(true);
             const createThreadTx = await writeContract(wagmiConfig, {
                 address: getDeBBSAddress(chain && chain.id),
                 abi: deBbsAbi,
@@ -147,6 +150,8 @@ export default function Home() {
                 variant: "subtle",
                 isClosable: true,
             });
+        } finally {
+            setIsTxWaiting(false);
         }
     };
 
@@ -178,7 +183,20 @@ export default function Home() {
                                 onChange={handleChange}
                             />
                             <HStack>
-                                <Button variant="bbs" bgColor={primaryColor} color={bgColor} type="submit">
+                                <Button
+                                    variant="bbs"
+                                    bgColor={primaryColor}
+                                    color={bgColor}
+                                    type="submit"
+                                    isLoading={isTxWaiting}
+                                    loadingText="Creating A Thread..."
+                                    _loading={{
+                                        _hover: {
+                                            opacity: 0.75,
+                                            bgColor: { bgColor },
+                                        },
+                                    }}
+                                >
                                     Create A Thread!
                                 </Button>
                                 <Text fontSize={14} display="inline-block" mx={4} fontStyle="italic">
