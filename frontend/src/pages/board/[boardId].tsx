@@ -1,4 +1,4 @@
-import { BBSHeading } from "@/components/BBSHeading";
+import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
 import { Button, FormControl, HStack, Input, Link, Text, useToast, VStack } from "@chakra-ui/react";
 import Head from "next/head";
@@ -15,13 +15,13 @@ import { formatEther } from "viem";
 
 export default function Home() {
     const { chain } = useAccount();
-    const { data: getBoardsResult } = useReadContract({
-        address: getDeBBSAddress(chain && chain.id),
-        functionName: "getBoards",
-        abi: deBbsAbi,
-    });
-
     const boardId = 0;
+    const { data: getBoardResult } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "getBoard",
+        abi: deBbsAbi,
+        args: [BigInt(boardId)],
+    });
 
     const { data: getThreadsByBoardResult, refetch: refetchGetThreadsByBoard } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
@@ -158,6 +158,7 @@ export default function Home() {
     const primaryColor = "white";
     const bgColor = "#3355FF";
 
+    console.log("getBoardResult", getBoardResult);
     return (
         <>
             <Head>
@@ -167,6 +168,8 @@ export default function Home() {
             </Head>
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
+                    <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Board: ${getBoardResult && getBoardResult[2]}`}</BBSHeadingTitle>
+
                     <BBSHeading headingProps={{ mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
                         <VStack align="start" spacing={2}>
