@@ -2,7 +2,7 @@ import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
 import { Box, chakra, HStack, Table, TableContainer, Tbody, Td, Tr, Image } from "@chakra-ui/react";
 import Head from "next/head";
-import { useEnsAvatar, useEnsName, useEnsText } from "wagmi";
+import { useAccount, useEnsAvatar, useEnsName, useEnsText } from "wagmi";
 import { useRouter } from "next/router";
 import useEnsNameOrAddress from "@/hooks/useEnsNameOrAddress";
 import { getAddress, zeroAddress } from "viem";
@@ -11,6 +11,7 @@ import * as jdenticon from "jdenticon";
 import useSWR from "swr";
 import { theGraphFetcher } from "@/utils/theGraphFetcher";
 import Post from "@/components/Post";
+import { getDefaultPrimaryColor, getDefaultBgColor } from "@/constants/DefaultColors";
 
 type theGraphResponse = {
     data: {
@@ -34,8 +35,9 @@ export default function User() {
 
     const displayName = useEnsNameOrAddress(address, false);
 
-    const primaryColor = "white";
-    const bgColor = "#3355FF";
+    const { chain } = useAccount();
+    const primaryColor = getDefaultPrimaryColor(chain && chain.id);
+    const bgColor = getDefaultBgColor(chain && chain.id);
 
     const { data: ensName } = useEnsName({
         address: address,
@@ -83,7 +85,7 @@ export default function User() {
     ];
 
     const query = `{
-        postCreateds(first: 10, where: {postOwner: "${address}"}) {
+        postCreateds(first: 10, where: {postOwner: "${address}"},orderBy: timestamp, orderDirection: desc) {
           postId
           parentThreadId
           postOwner
@@ -127,24 +129,27 @@ export default function User() {
                                             {address}
                                         </Td>
                                     </Tr>
-                                    {ensData.map((data, i) => (
-                                        <Tr key={i}>
-                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                                {data[0]}
-                                            </Td>
-                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                                {data[0] === "twitter" && "@"}
-                                                {data[1]}
-                                            </Td>
-                                        </Tr>
-                                    ))}
+                                    {ensData.map(
+                                        (data, i) =>
+                                            data[1] && (
+                                                <Tr key={i}>
+                                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                        {data[0]}
+                                                    </Td>
+                                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                        {data[0] === "twitter" && "@"}
+                                                        {data[1]}
+                                                    </Td>
+                                                </Tr>
+                                            )
+                                    )}
                                 </Tbody>
                             </Table>
                         </TableContainer>
                     </HStack>
                     {/* implement The Graph data */}
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts by the User</BBSHeading>
-                    <Hr borderStyle="dashed" my={2} />
+                    <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
                     {theGraphResult &&
                         theGraphResult.data &&
                         theGraphResult.data.postCreateds.map((post, i) => <Post key={i} post={post} />)}

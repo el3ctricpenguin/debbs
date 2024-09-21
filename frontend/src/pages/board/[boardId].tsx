@@ -33,6 +33,7 @@ import { ThreadTableRow } from "@/components/ThreadTableRow";
 import { theGraphFetcher } from "@/utils/theGraphFetcher";
 import useSWR from "swr";
 import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
+import { getDefaultBgColor, getDefaultPrimaryColor } from "@/constants/DefaultColors";
 
 type theGraphResponse = {
     data: {
@@ -77,7 +78,7 @@ export default function Board() {
     });
 
     const query = `{
-        postCreateds(first:3, where: {}) {
+        postCreateds(first:3, where: {},orderBy: timestamp, orderDirection: desc) {
           postId
           parentThreadId
           postOwner
@@ -149,8 +150,8 @@ export default function Board() {
         }
     };
 
-    const primaryColor = "white";
-    const bgColor = "#3355FF";
+    const primaryColor = getDefaultPrimaryColor(chain && chain.id);
+    const bgColor = getDefaultBgColor(chain && chain.id);
 
     return (
         <>
@@ -174,11 +175,19 @@ export default function Board() {
                                     </Td>
                                 </Tr>
                                 <Tr>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[2]}</Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor}>
+                                        description
+                                    </Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor}>
+                                        {getBoardResult && getBoardResult[2]}
+                                    </Td>
                                 </Tr>
                                 <Tr>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                    <Td
+                                        borderLeft={`1px solid ${primaryColor}`}
+                                        borderBottom={`1px solid ${primaryColor}`}
+                                        borderTop={`1px solid ${primaryColor}`}
+                                    >
                                         time created
                                     </Td>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
@@ -190,14 +199,19 @@ export default function Board() {
                     </TableContainer>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
-
                     <TableContainer>
                         <Table size="sm">
                             <Thead>
                                 <Tr>
-                                    <Th color={primaryColor}>moderator</Th>
-                                    <Th color={primaryColor}>title</Th>
-                                    <Th color={primaryColor}>earned fee</Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        moderator
+                                    </Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        title
+                                    </Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        earned fee
+                                    </Th>
                                 </Tr>
                             </Thead>
                             <Tbody borderRight={`1px solid ${primaryColor}`}>
@@ -237,7 +251,7 @@ export default function Board() {
                                 border={`2px ${primaryColor} solid`}
                                 bgColor={bgColor}
                                 placeholder="Thread Title"
-                                _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
+                                _placeholder={{ color: primaryColor == "#FFFFFF" ? "whiteAlpha.700" : primaryColor, fontStyle: "italic" }}
                                 isRequired
                                 name="threadTitle"
                                 value={formData.threadTitle}
