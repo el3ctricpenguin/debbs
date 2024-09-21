@@ -6,7 +6,7 @@ const ETHERSCAN_API_KEY = "";
 const PRIVATE_KEY_FOR_DEPLOYMENT = "";
 
 module.exports = {
-  solidity: "0.8.27",  //this config option is crucial. If this does not exist, error may occur.
+  solidity: "0.8.27",
   networks: {
     sepolia: {
       url: `https://ethereum-sepolia-rpc.publicnode.com/`,
