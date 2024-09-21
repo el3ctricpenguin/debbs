@@ -17,9 +17,15 @@ describe("deBBS Tests", function () {
     const threadCreationFee = ethers.parseEther("0.001");
     const postCreationFee = ethers.parseEther("0.0001");
 
+    console.log(await deBBS.getPostsCount());
+
     await deBBS.connect(owner).createBoard("Test board 1", description, primaryColor, bgColor, frontendOwner.address, { value: boardCreationFee });
     await deBBS.connect(owner).createThread(0, "Test thread 1", frontendOwner.address, { value: threadCreationFee });
-    await deBBS.connect(owner).createPost(0, deBBS.posts.length, "Test post 1", frontendOwner.address, { value: postCreationFee });
+    await deBBS.connect(owner).createPost(0, await deBBS.getPostsCount(), "Test post 1", frontendOwner.address, { value: postCreationFee });
+
+
+    console.log(await deBBS.getPostsCount());
+
 
     return { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee };
   }
@@ -108,11 +114,9 @@ describe("deBBS Tests", function () {
     it("Should create a post with correct fee and correct data", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      console.log(deBBS.posts.length);
-      await deBBS.connect(addr1).createPost(0, deBBS.posts.length, postContent, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr1).createPost(0, await deBBS.getPostsCount(), postContent, frontendOwner.address, { value: postCreationFee });
 
-
-      const post = await deBBS.getPost(deBBS.posts.length-1);
+      const post = await deBBS.getPost(await deBBS.getPostsCount() - 1n);
       expect(post[2]).to.equal(addr1.address);
       expect(post[3]).to.equal(postContent);
     });
@@ -121,7 +125,7 @@ describe("deBBS Tests", function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       const incorrectPostCreationFee = ethers.parseEther("0.0002");
-      await expect(deBBS.connect(addr1).createPost(0, deBBS.posts.length, postContent, frontendOwner.address, { value: incorrectPostCreationFee }))
+      await expect(deBBS.connect(addr1).createPost(0, deBBS.getPostsCount(), postContent, frontendOwner.address, { value: incorrectPostCreationFee }))
         .to.be.revertedWith("You should pay correct fee to create a post.");
     });
 
@@ -130,7 +134,7 @@ describe("deBBS Tests", function () {
 
       //boardOwner = owner, threadOwner = addr1, postOwner = addr2
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
-      await expect(deBBS.connect(addr2).createPost(1, deBBS.posts.length, postContent, frontendOwner.address, { value: postCreationFee })
+      await expect(deBBS.connect(addr2).createPost(1, deBBS.getPostsCount(), postContent, frontendOwner.address, { value: postCreationFee })
         ).to.changeEtherBalances(
           [addr2, owner, addr1, frontendOwner, deBBS],
           [postCreationFee * -1n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n]
@@ -143,11 +147,11 @@ describe("deBBS Tests", function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
-      await deBBS.connect(addr2).createPost(1, deBBS.posts.length, postContent, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr2).createPost(1, deBBS.getPostsCount(), postContent, frontendOwner.address, { value: postCreationFee });
 
-      expect(await deBBS.connect(addr2).deletePost(deBBS.posts.length-1));
+      expect(await deBBS.connect(addr2).deletePost(await deBBS.getPostsCount()-1n));
 
-      const post = await deBBS.getPost(deBBS.posts.length-1);
+      const post = await deBBS.getPost(await deBBS.getPostsCount()-1n);
       expect(post[5]).to.equal(true);
     });
 
@@ -155,11 +159,11 @@ describe("deBBS Tests", function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
       
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
-      await deBBS.connect(addr2).createPost(1, deBBS.posts.length, postContent, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr2).createPost(1, await deBBS.getPostsCount(), postContent, frontendOwner.address, { value: postCreationFee });
       
-      expect(await deBBS.connect(addr1).deletePost(deBBS.posts.length));
+      expect(await deBBS.connect(addr1).deletePost(await deBBS.getPostsCount()-1n));
 
-      const post = await deBBS.getPost(deBBS.posts.length);
+      const post = await deBBS.getPost(await deBBS.getPostsCount() - 1n);
       expect(post[5]).to.equal(true);
     });    
 

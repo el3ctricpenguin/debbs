@@ -271,6 +271,10 @@ contract deBBS {
         return postsByThread;
     }
 
+    function getPostsCount() public view returns (uint256) {
+        return posts.length;
+    }
+
     function getPostsCountByThread(uint threadId) public view returns (uint256) {
         return threadToPosts[threadId].length;
     }
