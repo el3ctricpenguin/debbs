@@ -75,7 +75,7 @@ export default function Home() {
         ...threadsResult.map(({ account, threadDescription, postCount }) => [
             account,
             threadDescription,
-            (Math.floor(Number(createThreadFee) * postCount * 10000) / 10000).toFixed(4).toString() + " ETH",
+            (createThreadFee ? Number(formatEther(createThreadFee * BigInt(postCount))) : 0).toFixed(4).toString() + " ETH",
         ])
     );
     console.log(table.toString());
@@ -211,7 +211,14 @@ export default function Home() {
                         {table.toString()}
                     </Text>
                     <Text>
-                        {getThreadsByBoardResult && getThreadsByBoardResult.map((thread, i) => <li key={i}>{thread.threadTitle}</li>)}
+                        {getThreadsByBoardResult &&
+                            getThreadsByBoardResult.map((thread, i) => (
+                                <li key={i}>
+                                    <Link as={NextLink} href={`/thread/${thread.threadId}`}>
+                                        {thread.threadTitle}
+                                    </Link>
+                                </li>
+                            ))}
                     </Text>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
