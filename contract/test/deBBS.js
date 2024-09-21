@@ -9,7 +9,7 @@ describe("deBBS Tests", function () {
 
     const boardTitle = "Test Board";
     const threadTitle = "Test thread";
-    const postTitle = "Test post";
+    const postContent = "Test post";
     const description = "Test Description";
     const primaryColor = "#000000";
     const bgColor = "#FFFFFF";
@@ -21,12 +21,12 @@ describe("deBBS Tests", function () {
     await deBBS.connect(owner).createThread(0, "Test thread 1", frontendOwner.address, { value: threadCreationFee });
     await deBBS.connect(owner).createPost(0, "Test post 1", frontendOwner.address, { value: postCreationFee });
 
-    return { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee };
+    return { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee };
   }
 
   describe("Board Creation Test", function () {
     it("Should create a board with correct fee and correct data", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await deBBS.connect(addr1).createBoard(boardTitle, description, primaryColor, bgColor, frontendOwner.address, { value: boardCreationFee });
 
@@ -36,7 +36,7 @@ describe("deBBS Tests", function () {
     });
 
     it("Should revert when incorrect fee is sent for creating a board", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       const incorrectBoardCreationFee = ethers.parseEther("0.02");
       await expect(deBBS.connect(addr1).createBoard(boardTitle, description, primaryColor, bgColor, frontendOwner.address, { value: incorrectBoardCreationFee }))
@@ -44,7 +44,7 @@ describe("deBBS Tests", function () {
     });
 
     it("Should distribute fee to create a board to the frontendOwner if provided", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createBoard(boardTitle, description, primaryColor, bgColor, frontendOwner.address, { value: boardCreationFee })
             ).to.changeEtherBalances(
@@ -54,7 +54,7 @@ describe("deBBS Tests", function () {
     });
 
     it("Should not distribute fee to create a board to the frontendOwner if the address is zero", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createBoard(boardTitle, description, primaryColor, bgColor, ethers.ZeroAddress, { value: boardCreationFee })
             ).to.changeEtherBalances(
@@ -66,17 +66,17 @@ describe("deBBS Tests", function () {
 
   describe("Thread Creation Tests", function () {
     it("Should create a thread with correct fee and correct data", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
 
       const thread = await deBBS.getThread(1);
-      expect(thread[1]).to.equal(addr1.address);
-      expect(thread[2]).to.equal(threadTitle);
+      expect(thread[2]).to.equal(addr1.address);
+      expect(thread[3]).to.equal(threadTitle);
     });
 
     it("Should revert when incorrect fee is sent for creating a thread", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       const incorrectThreadCreationFee = ethers.parseEther("0.002");
       await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: incorrectThreadCreationFee }))
@@ -84,7 +84,7 @@ describe("deBBS Tests", function () {
     });
 
     it("Should distribute fee to create a thread to the frontendOwner if provided", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee })
         ).to.changeEtherBalances(
@@ -94,7 +94,7 @@ describe("deBBS Tests", function () {
     });
 
     it("Should not distribute fee to create a thread to the frontendOwner if the address is zero", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createThread(0, threadTitle, ethers.ZeroAddress, { value: threadCreationFee })
         ).to.changeEtherBalances(
@@ -106,29 +106,29 @@ describe("deBBS Tests", function () {
 
   describe("Post Creation Tests", function () {
     it("Should create a post with correct fee and correct data", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      await deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr1).createPost(0, postContent, frontendOwner.address, { value: postCreationFee });
 
       const post = await deBBS.getPost(1);
-      expect(post[1]).to.equal(addr1.address);
-      expect(post[2]).to.equal(postTitle);
+      expect(post[2]).to.equal(addr1.address);
+      expect(post[3]).to.equal(postContent);
     });
 
     it("Should revert when incorrect fee is sent for creating a post", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       const incorrectPostCreationFee = ethers.parseEther("0.0002");
-      await expect(deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: incorrectPostCreationFee }))
+      await expect(deBBS.connect(addr1).createPost(0, postContent, frontendOwner.address, { value: incorrectPostCreationFee }))
         .to.be.revertedWith("You should pay correct fee to create a post.");
     });
 
     it("Should distribute fee to create a post to the frontendOwner if provided", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
       
       //boardOwner = owner, threadOwner = addr1, postOwner = addr2
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
-      await expect(deBBS.connect(addr2).createPost(1, postTitle, frontendOwner.address, { value: postCreationFee })
+      await expect(deBBS.connect(addr2).createPost(1, postContent, frontendOwner.address, { value: postCreationFee })
         ).to.changeEtherBalances(
           [addr2, owner, addr1, frontendOwner, deBBS],
           [postCreationFee * -1n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n]
@@ -138,21 +138,27 @@ describe("deBBS Tests", function () {
 
   describe("Post Deletion Tests", function () {
     it("Should allow post deletion by the post owner", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
-      await deBBS.connect(addr2).createPost(1, postTitle, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr2).createPost(1, postContent, frontendOwner.address, { value: postCreationFee });
 
-      expect(await deBBS.connect(addr1).deletePost(1));
+      expect(await deBBS.connect(addr2).deletePost(1));
+
+      const post = await deBBS.getPost(1);
+      expect(post[5]).to.equal(true);
     });
 
     it("Should allow post deletion by the thread owner", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
       
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
-      await deBBS.connect(addr2).createPost(1, postTitle, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr2).createPost(1, postContent, frontendOwner.address, { value: postCreationFee });
       
-      expect(await deBBS.connect(addr2).deletePost(1))
+      expect(await deBBS.connect(addr1).deletePost(1));
+
+      const post = await deBBS.getPost(1);
+      expect(post[5]).to.equal(true);
     });    
 
   });
@@ -160,7 +166,7 @@ describe("deBBS Tests", function () {
 
   describe("View Function Tests", function () {
     it("should work getThreadsByBoard", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       //There is one thread in board No.0.
       expect((await deBBS.getThreadsByBoard(0)).length).to.equal(1);
@@ -176,13 +182,13 @@ describe("deBBS Tests", function () {
     });
 
     it("should work getPostsByThread", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       //There is one post in thread No.0.
       expect((await deBBS.getPostsByThread(0)).length).to.equal(1);
 
       //There is two post in thread No.0.
-      await deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: postCreationFee });
+      await deBBS.connect(addr1).createPost(0, postContent, frontendOwner.address, { value: postCreationFee });
       expect((await deBBS.getPostsByThread(0)).length).to.equal(2);
 
       //There is no thread in thread No.1.
@@ -193,7 +199,7 @@ describe("deBBS Tests", function () {
     });
 
     it("should work isAddressBanned", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       //false case
       expect(await deBBS.connect(owner).isAddressBanned(0, addr1)).to.equal(false);
@@ -207,7 +213,7 @@ describe("deBBS Tests", function () {
 
   describe("Event Emission Tests", function () {
     it("should emit createBoard event", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createBoard(boardTitle, description, primaryColor, bgColor, frontendOwner.address, { value: boardCreationFee }))
         .to.emit(deBBS, "BoardCreated");
@@ -215,7 +221,7 @@ describe("deBBS Tests", function () {
     });
 
     it("should emit createThread event", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
       await expect(deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee }))
       .to.emit(deBBS, "ThreadCreated");
@@ -223,9 +229,9 @@ describe("deBBS Tests", function () {
     });
 
     it("should emit createPost event", async function () {
-      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postContent, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      await expect(deBBS.connect(addr1).createPost(0, postTitle, frontendOwner.address, { value: postCreationFee }))
+      await expect(deBBS.connect(addr1).createPost(0, postContent, frontendOwner.address, { value: postCreationFee }))
       .to.emit(deBBS, "PostCreated");
 
     });

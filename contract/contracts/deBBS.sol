@@ -198,6 +198,7 @@ contract deBBS {
 
     function getThread(uint256 threadId) public view returns (
         uint256,
+        uint256,
         address,
         string memory,
         uint256
@@ -205,6 +206,7 @@ contract deBBS {
         Thread memory thread = threads[threadId];
         return (
             thread.threadId,
+            thread.parentBoardId,
             thread.threadOwner,
             thread.threadTitle,
             thread.timestamp
@@ -229,16 +231,20 @@ contract deBBS {
 
     function getPost(uint256 postId) public view returns (
         uint256,
+        uint256,
         address,
         string memory,
-        uint256
+        uint256,
+        bool
     ) {
         Post memory post = posts[postId];
         return (
             post.postId,
+            post.parentThreadId,
             post.postOwner,
             post.postContent,
-            post.timestamp
+            post.timestamp,
+            post.isDeleted
         );
     }
 
