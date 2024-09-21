@@ -194,6 +194,9 @@ contract deBBS {
         uint256,
         address,
         string memory,
+        string memory,
+        string memory,
+        string memory,
         uint256
     ) {
         Board memory board = boards[boardId];
@@ -201,6 +204,9 @@ contract deBBS {
             board.boardId,
             board.boardOwner,
             board.boardTitle,
+            board.description,
+            board.primaryColor,
+            board.bgColor,
             board.timestamp
         );
     }
@@ -214,7 +220,8 @@ contract deBBS {
         uint256,
         address,
         string memory,
-        uint256
+        uint256,
+        address[] memory
     ) {
         Thread memory thread = threads[threadId];
         return (
@@ -222,7 +229,8 @@ contract deBBS {
             thread.parentBoardId,
             thread.threadOwner,
             thread.threadTitle,
-            thread.timestamp
+            thread.timestamp,
+            thread.bannedUsers
         );
     }
 

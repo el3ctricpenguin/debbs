@@ -3,9 +3,9 @@ const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 const deBBSModule = buildModule("deBBSModule", (m) => {
   const deBBS = m.contract("deBBS");
 
-  m.call(deBBS, "createBoard", ["Ethereum", "aiueo", "#000000", "#FFFFFF", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.01"), id:"a01_CreateBoard" });
-  m.call(deBBS, "createBoard", ["DeFi", "kakikukeko", "#00FF00", "#FF00FF", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.01"), id:"a02_CreateBoard" });
-  m.call(deBBS, "createBoard", ["Trading", "sasisuseso", "#0000FF", "#00FFFF", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.01"), id:"a03_CreateBoard" });
+  m.call(deBBS, "createBoard", ["Ethereum", "Let's talk about Ethereum", "#000000", "#FFFFFF", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.01"), id:"a01_CreateBoard" });
+  m.call(deBBS, "createBoard", ["DeFi", "DeFi is the future. Please share your alpha.", "#00FF00", "#FF00FF", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.01"), id:"a02_CreateBoard" });
+  m.call(deBBS, "createBoard", ["Trading", "Share alpha plz.", "#0000FF", "#00FFFF", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.01"), id:"a03_CreateBoard" });
   
   m.call(deBBS, "createThread", [0, "I made a special anti-fraud wallet, Pizza Wallet", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.001"), id:"a04_CreateThread" });
   m.call(deBBS, "createThread", [0, "Where can I get WBTC at better price?", "0x1f9090aaE28b8a3dCeaDf281B0F12828e676c326"], {value: ethers.parseEther("0.001"), id:"a05_CreateThread" });  
