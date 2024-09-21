@@ -140,7 +140,7 @@ export default function Board() {
     return (
         <>
             <Head>
-                <title>&gt;&gt;deBBS | Board</title>
+                <title>&gt;&gt;deBBS | Board: {getBoardResult && getBoardResult[2]}</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -203,7 +203,7 @@ export default function Board() {
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {recentPostsResult.map((post, i) => (
                         <Text key={i}>
-                            <Link as={NextLink} href={`/account/${post.account}`}>
+                            <Link as={NextLink} href={`/user/${post.account}`}>
                                 [{post.account}]
                             </Link>{" "}
                             <Link as={NextLink} href={`/post/${post.postId}`}>

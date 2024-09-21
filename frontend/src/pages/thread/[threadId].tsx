@@ -111,7 +111,7 @@ export default function Thread() {
     return (
         <>
             <Head>
-                <title>&gt;&gt;deBBS | Board</title>
+                <title>&gt;&gt;deBBS | Thread: {getThreadResult && getThreadResult[3]}</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
