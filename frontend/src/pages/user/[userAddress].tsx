@@ -1,4 +1,4 @@
-import { BBSHeadingTitle } from "@/components/BBSHeading";
+import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
 import { Box, chakra, HStack, Table, TableContainer, Tbody, Td, Tr, Image } from "@chakra-ui/react";
 import Head from "next/head";
@@ -110,6 +110,8 @@ export default function User() {
                             </Table>
                         </TableContainer>
                     </HStack>
+                    {/* implement The Graph data */}
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts by the User</BBSHeading>
                     <Hr borderStyle="dashed" my={2} />
                 </>
             </BBSLayout>
