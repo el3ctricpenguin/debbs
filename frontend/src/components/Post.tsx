@@ -75,7 +75,7 @@ export default function Post({ post }: { post: PostProps }) {
                 <Text>{post.postContent}</Text>
                 <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
             </VStack>
-            <Hr borderStyle="dashed" my={2} />
+            <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
         </Box>
     );
 }

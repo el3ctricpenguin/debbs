@@ -13,6 +13,7 @@ import { formatEther } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
 import Post from "@/components/Post";
+import { getDefaultBgColor, getDefaultPrimaryColor } from "@/constants/DefaultColors";
 
 export default function Thread() {
     const { chain } = useAccount();
@@ -104,8 +105,8 @@ export default function Thread() {
         }
     };
 
-    const primaryColor = "white";
-    const bgColor = "#3355FF";
+    const primaryColor = getDefaultPrimaryColor(chain && chain.id);
+    const bgColor = getDefaultBgColor(chain && chain.id);
 
     const Hr = chakra("hr");
     return (
@@ -141,7 +142,7 @@ export default function Thread() {
                         </Table>
                     </TableContainer>
 
-                    <Hr borderStyle="dashed" my={2} />
+                    <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
                     {getPostsByThreadResult && getPostsByThreadResult.map((post, i) => <Post key={i} post={post} />)}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
@@ -153,7 +154,7 @@ export default function Thread() {
                                 border={`2px ${primaryColor} solid`}
                                 bgColor={bgColor}
                                 placeholder="Message"
-                                _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
+                                _placeholder={{ color: primaryColor == "#FFFFFF" ? "whiteAlpha.700" : primaryColor, fontStyle: "italic" }}
                                 isRequired
                                 name="postContent"
                                 value={formData.postContent}

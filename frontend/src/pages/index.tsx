@@ -3,6 +3,7 @@ import BBSLayout from "@/components/BBSLayout";
 import { DashboardTable } from "@/components/DashboardTable";
 import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
+import { getDefaultPrimaryColor, getDefaultBgColor } from "@/constants/DefaultColors";
 import { deBbsAbi } from "@/generated";
 import { theGraphFetcher } from "@/utils/theGraphFetcher";
 import { Box, chakra, Link, Text, Tooltip } from "@chakra-ui/react";
@@ -11,9 +12,6 @@ import NextLink from "next/link";
 import useSWR from "swr";
 import { getAddress } from "viem";
 import { useAccount, useReadContract } from "wagmi";
-
-const primaryColor = "#fff";
-const bgColor = "#335CFF";
 
 const query = `{
   threadCreateds(first: 3, orderBy: timestamp, orderDirection: desc) {
@@ -73,6 +71,9 @@ export default function Home() {
     const recentPostsResult = theGraphResult && theGraphResult.data.postCreateds;
 
     const Hr = chakra("hr");
+
+    const primaryColor = getDefaultPrimaryColor(chain && chain.id);
+    const bgColor = getDefaultBgColor(chain && chain.id);
     return (
         <>
             <Head>
@@ -92,7 +93,7 @@ export default function Home() {
                                     {i == 0 ? "" : " / "}
                                     <Tooltip
                                         label={
-                                            <Box>
+                                            <Box color={primaryColor}>
                                                 <Text fontWeight={900}>&gt; {board.boardTitle}</Text>
                                                 <Text>[moderator] {board.boardOwner}</Text>
                                                 <Text>[description] {board.description}</Text>
@@ -113,7 +114,7 @@ export default function Home() {
                             ))}
                     </Text>
                     <Text>[See More]</Text>
-                    <Hr borderStyle="dashed" my={2} />
+                    <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
                     {recentThreadsResult &&
