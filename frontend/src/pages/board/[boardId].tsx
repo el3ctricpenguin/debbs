@@ -199,7 +199,6 @@ export default function Board() {
                     </TableContainer>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
-
                     <TableContainer>
                         <Table size="sm">
                             <Thead>

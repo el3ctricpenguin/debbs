@@ -2,11 +2,12 @@ import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
 import { DashboardTable } from "@/components/DashboardTable";
 import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
+import { BoardTableRow } from "@/components/ThreadTableRow";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { getDefaultPrimaryColor, getDefaultBgColor } from "@/constants/DefaultColors";
 import { deBbsAbi } from "@/generated";
 import { theGraphFetcher } from "@/utils/theGraphFetcher";
-import { Box, chakra, Link, Text, Tooltip } from "@chakra-ui/react";
+import { Box, chakra, Link, Table, TableContainer, Tbody, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import useSWR from "swr";
@@ -62,6 +63,12 @@ export default function Home() {
     });
     console.log("getBoardsResult", getBoardsResult);
 
+    const { data: createBoardFee } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "createBoardFee",
+        abi: deBbsAbi,
+    });
+
     const { data: theGraphResult } = useSWR<theGraphResponse>(query, theGraphFetcher);
     console.log(theGraphResult);
     // console.log("postCreateds", theGraphResult && JSON.stringify(theGraphResult.data.postCreateds));
@@ -86,6 +93,41 @@ export default function Home() {
                     <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Dashboard: Welcome to deBBS`}</BBSHeadingTitle>
                     <DashboardTable />
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Boards</BBSHeading>
+
+                    <TableContainer>
+                        <Table size="sm">
+                            <Thead>
+                                <Tr>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        title
+                                    </Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        description
+                                    </Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        moderator
+                                    </Th>
+                                    <Th color={primaryColor} borderColor={primaryColor}>
+                                        earned fee
+                                    </Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody borderRight={`1px solid ${primaryColor}`}>
+                                {getBoardsResult &&
+                                    getBoardsResult.map((board, i) => (
+                                        <BoardTableRow
+                                            boardOwner={board.boardOwner}
+                                            boardId={board.boardId}
+                                            boardTitle={board.boardTitle}
+                                            boardDescription={board.description}
+                                            createBoardFee={createBoardFee ? createBoardFee : BigInt(0)}
+                                            key={i}
+                                        />
+                                    ))}
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
+                    <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
                     <Text>
                         {getBoardsResult &&
                             getBoardsResult.map((board, i) => (
@@ -113,8 +155,6 @@ export default function Home() {
                                 </>
                             ))}
                     </Text>
-                    <Text>[See More]</Text>
-                    <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
                     {recentThreadsResult &&
