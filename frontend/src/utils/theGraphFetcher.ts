@@ -1,5 +1,5 @@
 export const theGraphFetcher = async (query: string) => {
-    const response = await fetch("https://api.studio.thegraph.com/query/88257/debbs_linea_sepolia/version/latest", {
+    const response = await fetch("https://api.studio.thegraph.com/query/88257/debbs_sepolia/version/latest", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

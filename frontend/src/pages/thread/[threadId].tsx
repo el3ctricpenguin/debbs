@@ -145,7 +145,7 @@ export default function Thread() {
                     <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
                     {getPostsByThreadResult && getPostsByThreadResult.map((post, i) => <Post key={i} post={post} />)}
 
-                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Post</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
                         <VStack align="start" spacing={2}>
                             <Input

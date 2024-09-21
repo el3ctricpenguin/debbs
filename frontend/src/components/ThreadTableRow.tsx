@@ -7,6 +7,7 @@ import { Address, formatEther } from "viem";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
+import { sepolia } from "viem/chains";
 
 export function ThreadTableRow({
     threadOwner,
@@ -73,7 +74,9 @@ export function BoardTableRow({
         abi: deBbsAbi,
         args: [boardId],
     });
-    return (
+    return chain && chain.id === sepolia.id && Number(boardId) == 3 ? (
+        <></>
+    ) : (
         <Tr borderTop={`1px solid ${primaryColor}`}>
             <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
                 <Tooltip
