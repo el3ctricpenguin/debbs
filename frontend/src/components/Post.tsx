@@ -1,5 +1,5 @@
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
-import { Box, VStack, HStack, Text, chakra, Tooltip, Link, Image, Spacer } from "@chakra-ui/react";
+import { Box, VStack, HStack, Text, chakra, Tooltip, Link, Image, Spacer, useToast } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
 import { ColorsContext } from "@/config/ColorContext";
@@ -9,7 +9,11 @@ import * as jdenticon from "jdenticon";
 import { Address, getAddress } from "viem";
 import NextLink from "next/link";
 import { normalize } from "path";
-import { useEnsName, useEnsAvatar } from "wagmi";
+import { useEnsName, useEnsAvatar, useAccount } from "wagmi";
+import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { getDeBBSAddress } from "@/constants/ContractAddresses";
+import { deBbsAbi } from "@/generated";
+import { wagmiConfig } from "@/config/wagmi";
 
 type PostProps = {
     postId: bigint | string;
@@ -21,7 +25,7 @@ type PostProps = {
     mentionTo: bigint | string;
 };
 
-export default function Post({ post, isViewerModetator }: { post: PostProps; isViewerModetator?: boolean }) {
+export default function Post({ post, isViewerModetator, refetch }: { post: PostProps; isViewerModetator?: boolean; refetch?: () => void }) {
     const colors = useContext(ColorsContext);
     const primaryColor = colors[0];
     const bgColor = colors[1];
@@ -38,6 +42,50 @@ export default function Post({ post, isViewerModetator }: { post: PostProps; isV
         name: normalize(String(ensName)),
         chainId: 1,
     });
+
+    const toast = useToast();
+    const { chain } = useAccount();
+    const deletePost = async (postId: number) => {
+        try {
+            const createDeleteTx = await writeContract(wagmiConfig, {
+                address: getDeBBSAddress(chain && chain.id),
+                abi: deBbsAbi,
+                functionName: "deletePost",
+                args: [BigInt(postId)],
+            });
+            if (!createDeleteTx) {
+                throw new Error("Create Delete Tx rejected");
+            }
+            console.log("txId: ", createDeleteTx);
+            const createDeleteReceipt = await waitForTransactionReceipt(wagmiConfig, {
+                hash: createDeleteTx,
+            });
+            if (createDeleteReceipt.status === "reverted") {
+                throw new Error("Create Delete Tx failed");
+            }
+            if (refetch) {
+                refetch();
+            }
+            toast({
+                title: "Create Delete Tx Success",
+                description: createDeleteTx,
+                status: "success",
+                variant: "subtle",
+                isClosable: true,
+            });
+        } catch (e) {
+            const errorMessage = e instanceof Error ? `${e.message}` : `${e}`;
+            toast({
+                title: "Create Board Tx Failed",
+                description: errorMessage,
+                status: "error",
+                variant: "subtle",
+                isClosable: true,
+            });
+        } finally {
+        }
+    };
+
     return (
         !post.isDeleted && (
             <Box>
@@ -75,7 +123,9 @@ export default function Post({ post, isViewerModetator }: { post: PostProps; isV
                             </Link>
                         </Tooltip>
                         <Spacer />
-                        {isViewerModetator && <DeleteIcon color={primaryColor} h={4} />}
+                        {isViewerModetator && (
+                            <DeleteIcon color={primaryColor} h={4} onClick={() => deletePost(Number(post.postId))} cursor="pointer" />
+                        )}
                     </HStack>
                     <Text>{post.postContent}</Text>
                     <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>
