@@ -31,6 +31,7 @@ contract deBBS {
         string postContent;
         uint256 timestamp;
         bool isDeleted;
+        uint256 mentionTo;
     }
 
     Board[] public boards;
@@ -43,6 +44,7 @@ contract deBBS {
     event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, uint256 timestamp);
     event ThreadCreated(uint256 threadId, address threadOwner, string threadTitle, uint256 parentBoardId, uint256 timestamp);
     event PostCreated(uint256 postId, address postOwner, string postContent, uint256 parentThreadId, uint256 timestamp);
+    event Mention(address mentionFrom, address mentionTo, string replyContent, uint256 postIdFrom, uint256 parentThreadId, uint256 timestamp);
 
     mapping(uint256 => uint256[]) public boardToThreads; 
     mapping(uint256 => uint256[]) public threadToPosts; 
@@ -98,7 +100,7 @@ contract deBBS {
         emit ThreadCreated(threadId, msg.sender, threadTitle, boardId, block.timestamp);
     }
 
-    function createPost(uint256 threadId, string memory postContent, address frontendOwnerAddress) public payable {
+    function createPost(uint256 threadId, uint256 mentionTo, string memory postContent, address frontendOwnerAddress) public payable {
         require(msg.value == createPostFee, "You should pay correct fee to create a post.");
 
         uint256 postId = posts.length;
@@ -109,7 +111,8 @@ contract deBBS {
             postOwner: msg.sender,
             postContent: postContent,
             timestamp: block.timestamp,
-            isDeleted: false
+            isDeleted: false,
+            mentionTo: mentionTo
         }));
 
         threadToPosts[threadId].push(postId);
@@ -235,7 +238,8 @@ contract deBBS {
         address,
         string memory,
         uint256,
-        bool
+        bool,
+        uint256
     ) {
         Post memory post = posts[postId];
         return (
@@ -244,7 +248,8 @@ contract deBBS {
             post.postOwner,
             post.postContent,
             post.timestamp,
-            post.isDeleted
+            post.isDeleted,
+            post.mentionTo
         );
     }
 
