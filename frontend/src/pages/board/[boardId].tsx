@@ -7,6 +7,8 @@ import Table from "cli-table3";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
+import { useState } from "react";
+import { Addresses } from "@/constants/Addresses";
 import { formatEther } from "viem";
 
 export default function Home() {
@@ -94,6 +96,18 @@ export default function Home() {
         },
     ];
 
+    const [formData, setFormData] = useState({
+        threadTitle: "",
+        frontendOwnerAddress: Addresses.frontendOwner,
+    });
+    console.log(formData);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
     const primaryColor = "white";
     const bgColor = "#3355FF";
 
@@ -118,6 +132,8 @@ export default function Home() {
                                 _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
                                 isRequired
                                 name="threadTitle"
+                                value={formData.threadTitle}
+                                onChange={handleChange}
                             />
                             <HStack>
                                 <Button variant="bbs" bgColor={primaryColor} color={bgColor} type="submit">
