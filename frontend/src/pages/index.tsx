@@ -32,7 +32,7 @@ import NextLink from "next/link";
 import { useState } from "react";
 import useSWR from "swr";
 import { formatEther, getAddress } from "viem";
-import { sepolia } from "viem/chains";
+import { lineaSepolia, sepolia } from "viem/chains";
 import { useAccount, useReadContract } from "wagmi";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 
@@ -78,6 +78,7 @@ type theGraphResponse = {
 
 export default function Home() {
     const { chain } = useAccount();
+    console.log(chain && chain.id);
     const { data: getBoardsResult, refetch: refetchGetBoardsByBoard } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
         functionName: "getBoards",
@@ -278,8 +279,12 @@ export default function Home() {
                             )}
                     </Text>
 
-                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
-                    {recentThreadsResult &&
+                    {chain && (chain.id === sepolia.id || chain.id === lineaSepolia.id) && (
+                        <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
+                    )}
+                    {chain &&
+                        (chain.id === sepolia.id || chain.id === lineaSepolia.id) &&
+                        recentThreadsResult &&
                         recentThreadsResult.map((thread, i) =>
                             i < 3 ? (
                                 <Text key={i} isTruncated>
@@ -295,8 +300,12 @@ export default function Home() {
                             )
                         )}
 
-                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                    {recentPostsResult &&
+                    {chain && (chain.id === sepolia.id || chain.id === lineaSepolia.id) && (
+                        <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
+                    )}
+                    {chain &&
+                        (chain.id === sepolia.id || chain.id === lineaSepolia.id) &&
+                        recentPostsResult &&
                         recentPostsResult.map((post, i) =>
                             i < 3 ? (
                                 <Text key={i} isTruncated>
