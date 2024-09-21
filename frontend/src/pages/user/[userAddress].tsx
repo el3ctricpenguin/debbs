@@ -85,7 +85,7 @@ export default function User() {
     ];
 
     const query = `{
-        postCreateds(first: 10, where: {postOwner: "${address}"}) {
+        postCreateds(first: 10, where: {postOwner: "${address}"},orderBy: timestamp, orderDirection: desc) {
           postId
           parentThreadId
           postOwner

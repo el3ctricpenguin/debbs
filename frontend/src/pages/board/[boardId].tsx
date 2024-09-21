@@ -78,7 +78,7 @@ export default function Board() {
     });
 
     const query = `{
-        postCreateds(first:3, where: {}) {
+        postCreateds(first:3, where: {},orderBy: timestamp, orderDirection: desc) {
           postId
           parentThreadId
           postOwner
