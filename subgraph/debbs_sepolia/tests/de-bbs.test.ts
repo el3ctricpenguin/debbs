@@ -22,11 +22,17 @@ describe("Describe entity assertions", () => {
       "0x0000000000000000000000000000000000000001"
     )
     let boardTitle = "Example string value"
+    let description = "Example string value"
+    let primaryColor = "Example string value"
+    let bgColor = "Example string value"
     let timestamp = BigInt.fromI32(234)
     let newBoardCreatedEvent = createBoardCreatedEvent(
       boardId,
       boardOwner,
       boardTitle,
+      description,
+      primaryColor,
+      bgColor,
       timestamp
     )
     handleBoardCreated(newBoardCreatedEvent)
@@ -59,6 +65,24 @@ describe("Describe entity assertions", () => {
       "BoardCreated",
       "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
       "boardTitle",
+      "Example string value"
+    )
+    assert.fieldEquals(
+      "BoardCreated",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "description",
+      "Example string value"
+    )
+    assert.fieldEquals(
+      "BoardCreated",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "primaryColor",
+      "Example string value"
+    )
+    assert.fieldEquals(
+      "BoardCreated",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "bgColor",
       "Example string value"
     )
     assert.fieldEquals(
