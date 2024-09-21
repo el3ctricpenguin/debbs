@@ -183,6 +183,17 @@ describe("deBBS Tests", function () {
 
     });
 
+    it("should work isAddressBanned", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+
+      //false case
+      expect(await deBBS.connect(owner).isAddressBanned(0, addr1)).to.equal(false);
+
+      //true case
+      await deBBS.connect(owner).banUser(0, addr1);
+      expect(await deBBS.connect(owner).isAddressBanned(0, addr1)).to.equal(true);
+    });
+
   });
 
   describe("Event Emission Tests", function () {
