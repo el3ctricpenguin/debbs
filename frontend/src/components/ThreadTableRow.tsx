@@ -33,17 +33,17 @@ export function ThreadTableRow({
     });
     return (
         <Tr borderTop={`1px solid ${primaryColor}`}>
-            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1.5}>
                 <Link as={NextLink} href={`/user/${threadOwner}`}>
                     <EnsNameOrAddress address={threadOwner} shorten />
                 </Link>
             </Td>
-            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1.5}>
                 <Link as={NextLink} href={`/thread/${threadId}`}>
                     {threadTitle}
                 </Link>
             </Td>
-            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1.5}>
                 {postsCount !== undefined && Number(formatEther(postsCount * createThreadFee)).toFixed(4)} ETH
             </Td>
         </Tr>
