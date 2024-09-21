@@ -158,10 +158,10 @@ export default function Board() {
                                         {getBoardResult && getBoardResult[1]}
                                     </Td>
                                 </Tr>
-                                {/* <Tr>
+                                <Tr>
                                     <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[3]}</Td>
-                                </Tr> */}
+                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[2]}</Td>
+                                </Tr>
                                 <Tr>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
                                         time created
