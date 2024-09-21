@@ -150,6 +150,10 @@ contract deBBS {
         );
     }
 
+    function getBoards() public view returns (Board[] memory) {
+        return boards;
+    }
+
     function getThread(uint256 threadId) public view returns (
         uint256,
         address,
