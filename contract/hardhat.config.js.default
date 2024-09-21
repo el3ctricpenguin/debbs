@@ -1,0 +1,21 @@
+require("@nomicfoundation/hardhat-toolbox");
+
+const { vars } = require("hardhat/config");
+
+const ETHERSCAN_API_KEY = "";
+const PRIVATE_KEY_FOR_DEPLOYMENT = "";
+
+module.exports = {
+  solidity: "0.8.27",
+  networks: {
+    sepolia: {
+      url: `https://ethereum-sepolia-rpc.publicnode.com/`,
+      accounts: [PRIVATE_KEY_FOR_DEPLOYMENT],
+    },
+  },
+  etherscan: {
+    apiKey: {
+      sepolia: ETHERSCAN_API_KEY,
+    },
+  },
+};

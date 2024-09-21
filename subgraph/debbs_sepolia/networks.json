@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "deBBS": {
+      "address": "0x0B479E42C1EEdeAFb38f49085c4ceaE318db9748",
+      "startBlock": 6731711
+    }
+  }
+}

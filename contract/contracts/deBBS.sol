@@ -30,6 +30,8 @@ contract deBBS {
         address postOwner;
         string postContent;
         uint256 timestamp;
+        bool isDeleted;
+        uint256 mentionTo;
     }
 
     Board[] public boards;
@@ -39,9 +41,10 @@ contract deBBS {
     uint256 public createThreadFee;
     uint256 public createPostFee;
 
-    event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, uint256 timestamp);
-    event ThreadCreated(uint256 threadId, address threadOwner, string threadTitle, uint256 parentBoardId, uint256 timestamp);
-    event PostCreated(uint256 postId, address postOwner, string postContent, uint256 parentThreadId, uint256 timestamp);
+    event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, string description, string primaryColor, string bgColor, uint256 timestamp);
+    event ThreadCreated(uint256 threadId, uint256 parentBoardId, address threadOwner, string threadTitle, uint256 timestamp);
+    event PostCreated(uint256 postId, uint256 parentThreadId, address postOwner, string postContent, uint256 timestamp, bool isDeleted, uint256 mentionTo);
+    event Mention(uint256 postIdFrom, uint256 postIdTo, address mentionFrom, address mentionTo, string replyContent, uint256 parentThreadId, uint256 timestamp);
 
     mapping(uint256 => uint256[]) public boardToThreads; 
     mapping(uint256 => uint256[]) public threadToPosts; 
@@ -74,11 +77,12 @@ contract deBBS {
         }));
 
         _sendCreateBoardFeeToFrontendOwner(frontendOwnerAddress);
-        emit BoardCreated(boardId, msg.sender, boardTitle, block.timestamp);
+        emit BoardCreated(boardId, msg.sender, boardTitle, description, primaryColor, bgColor, block.timestamp);
 
     }
 
     function createThread(uint256 boardId, string memory threadTitle, address frontendOwnerAddress) public payable {
+        require(boardId < boards.length, "The board does not exist.");
         require(msg.value == createThreadFee, "You should pay correct fee to create a thread.");
 
         uint256 threadId = threads.length;
@@ -94,25 +98,35 @@ contract deBBS {
 
         boardToThreads[boardId].push(threadId);
         _sendCreateThreadFeeToBoardOwner(boardId, frontendOwnerAddress);
-        emit ThreadCreated(threadId, msg.sender, threadTitle, boardId, block.timestamp);
+        emit ThreadCreated(threadId, boardId, msg.sender, threadTitle, block.timestamp);
     }
 
-    function createPost(uint256 threadId, string memory postContent, address frontendOwnerAddress) public payable {
+    function createPost(uint256 threadId, uint256 mentionTo, string memory postContent, address frontendOwnerAddress) public payable {
+        require(threadId < threads.length, "The thread does not exist.");
+        require(isAddressBanned(threadId, msg.sender) == false, "You are banned from this thread."); 
         require(msg.value == createPostFee, "You should pay correct fee to create a post.");
-
+   
         uint256 postId = posts.length;
+
+        require(mentionTo <= postId, "You can't mention future posts.");
 
         posts.push(Post({
             postId: postId,
             parentThreadId: threadId,
             postOwner: msg.sender,
             postContent: postContent,
-            timestamp: block.timestamp
+            timestamp: block.timestamp,
+            isDeleted: false,
+            mentionTo: mentionTo
         }));
 
         threadToPosts[threadId].push(postId);
         _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
-        emit PostCreated(postId, msg.sender, postContent, threadId, block.timestamp);
+        emit PostCreated(postId, threadId, msg.sender, postContent, block.timestamp, false, mentionTo);
+        
+        if(mentionTo != postId) {
+            emit Mention(postId, mentionTo, msg.sender, posts[mentionTo].postOwner ,postContent, threadId, block.timestamp);
+        }
     }
 
     function banUser(uint256 threadId, address targetUserToBan) public {
@@ -120,6 +134,19 @@ contract deBBS {
         require(isAddressBanned(threadId, targetUserToBan) == false, "The User is already banned.");
 
         threads[threadId].bannedUsers.push(targetUserToBan);
+    }
+
+    function deletePost(uint256 postId) public {
+        require(postId < posts.length, "The post does not exist.");
+
+        address postOwner = posts[postId].postOwner;
+
+        uint256 parentThreadId = posts[postId].parentThreadId;
+        address parentThreadAddress = threads[parentThreadId].threadOwner;
+
+        require(msg.sender == postOwner || msg.sender == parentThreadAddress, "You don't have a permission to delete this post.");
+        posts[postId].isDeleted = true;
+
     }
 
     function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {
@@ -167,6 +194,9 @@ contract deBBS {
         uint256,
         address,
         string memory,
+        string memory,
+        string memory,
+        string memory,
         uint256
     ) {
         Board memory board = boards[boardId];
@@ -174,6 +204,9 @@ contract deBBS {
             board.boardId,
             board.boardOwner,
             board.boardTitle,
+            board.description,
+            board.primaryColor,
+            board.bgColor,
             board.timestamp
         );
     }
@@ -184,16 +217,20 @@ contract deBBS {
 
     function getThread(uint256 threadId) public view returns (
         uint256,
+        uint256,
         address,
         string memory,
-        uint256
+        uint256,
+        address[] memory
     ) {
         Thread memory thread = threads[threadId];
         return (
             thread.threadId,
+            thread.parentBoardId,
             thread.threadOwner,
             thread.threadTitle,
-            thread.timestamp
+            thread.timestamp,
+            thread.bannedUsers
         );
     }
 
@@ -215,16 +252,22 @@ contract deBBS {
 
     function getPost(uint256 postId) public view returns (
         uint256,
+        uint256,
         address,
         string memory,
+        uint256,
+        bool,
         uint256
     ) {
         Post memory post = posts[postId];
         return (
             post.postId,
+            post.parentThreadId,
             post.postOwner,
             post.postContent,
-            post.timestamp
+            post.timestamp,
+            post.isDeleted,
+            post.mentionTo
         );
     }
 
@@ -238,6 +281,10 @@ contract deBBS {
         }
 
         return postsByThread;
+    }
+
+    function getPostsCount() public view returns (uint256) {
+        return posts.length;
     }
 
     function getPostsCountByThread(uint threadId) public view returns (uint256) {
