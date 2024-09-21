@@ -44,6 +44,7 @@ export default function Home() {
         abi: deBbsAbi,
         args: [BigInt(boardId ? boardId : 0)],
     });
+    console.log("getBoardResult", getBoardResult);
 
     const { data: getThreadsByBoardResult, refetch: refetchGetThreadsByBoard } = useReadContract({
         address: getDeBBSAddress(chain && chain.id),
@@ -136,7 +137,6 @@ export default function Home() {
     const primaryColor = "white";
     const bgColor = "#3355FF";
 
-    console.log("getBoardResult", getBoardResult);
     return (
         <>
             <Head>
@@ -160,7 +160,7 @@ export default function Home() {
                                 </Tr>
                                 {/* <Tr>
                                     <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[]}</Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[3]}</Td>
                                 </Tr> */}
                                 <Tr>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>

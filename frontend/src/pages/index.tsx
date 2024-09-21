@@ -3,7 +3,7 @@ import BBSLayout from "@/components/BBSLayout";
 import { DashboardTable } from "@/components/DashboardTable";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
-import { chakra, Link, Text } from "@chakra-ui/react";
+import { Box, chakra, Link, Text, Tooltip } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useAccount, useReadContract } from "wagmi";
@@ -18,6 +18,7 @@ export default function Home() {
         functionName: "getBoards",
         abi: deBbsAbi,
     });
+    console.log("getBoardsResult", getBoardsResult);
 
     const recentThreadsResult = [
         {
@@ -73,9 +74,25 @@ export default function Home() {
                             getBoardsResult.map((board, i) => (
                                 <>
                                     {i == 0 ? "" : " / "}
-                                    <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
-                                        {board.boardTitle}
-                                    </Link>
+                                    <Tooltip
+                                        label={
+                                            <Box>
+                                                <Text fontWeight={900}>&gt; {board.boardTitle}</Text>
+                                                <Text>[moderator] {board.boardOwner}</Text>
+                                                <Text>[description] {board.description}</Text>
+                                            </Box>
+                                        }
+                                        placement="bottom-start"
+                                        bgColor={bgColor}
+                                        boxShadow="none"
+                                        border={`1px solid ${primaryColor}`}
+                                        borderRadius={0}
+                                        offset={[0, 4]}
+                                    >
+                                        <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
+                                            {board.boardTitle}
+                                        </Link>
+                                    </Tooltip>
                                 </>
                             ))}
                     </Text>
