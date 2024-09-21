@@ -26,10 +26,27 @@ import { wagmiConfig } from "@/config/wagmi";
 import { useState } from "react";
 import { Addresses } from "@/constants/Addresses";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
-import { formatEther } from "viem";
+import { formatEther, getAddress } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
 import { ThreadTableRow } from "@/components/ThreadTableRow";
+import { theGraphFetcher } from "@/utils/theGraphFetcher";
+import useSWR from "swr";
+import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
+
+type theGraphResponse = {
+    data: {
+        postCreateds: {
+            postId: string;
+            parentThreadId: string;
+            postOwner: string;
+            postContent: string;
+            timestamp: string;
+            isDeleted: boolean;
+            mentionTo: string;
+        }[];
+    };
+};
 
 export default function Board() {
     const { chain } = useAccount();
@@ -59,23 +76,21 @@ export default function Board() {
         abi: deBbsAbi,
     });
 
-    const recentPostsResult = [
-        {
-            postId: 0,
-            account: "sbf.eth",
-            postContent: "I’ll buy as much as ETH has you have...",
-        },
-        {
-            postId: 0,
-            account: "0x92da1...2ed3a",
-            postContent: "Ethereum is so dead!!",
-        },
-        {
-            postId: 0,
-            account: "house-boy.eth",
-            postContent: "I made 200k buying vegetable tokens last year",
-        },
-    ];
+    const query = `{
+        postCreateds(first:3, where: {}) {
+          postId
+          parentThreadId
+          postOwner
+          postContent
+          timestamp
+          isDeleted
+          mentionTo
+        }
+      }`;
+
+    const { data: theGraphResult } = useSWR<theGraphResponse>(query, theGraphFetcher);
+
+    const recentPostsResult = theGraphResult && theGraphResult.data.postCreateds;
 
     const [formData, setFormData] = useState({
         threadTitle: "",
@@ -201,16 +216,17 @@ export default function Board() {
                     </TableContainer>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                    {recentPostsResult.map((post, i) => (
-                        <Text key={i}>
-                            <Link as={NextLink} href={`/user/${post.account}`}>
-                                [{post.account}]
-                            </Link>{" "}
-                            <Link as={NextLink} href={`/post/${post.postId}`}>
-                                {post.postContent}
-                            </Link>
-                        </Text>
-                    ))}
+                    {recentPostsResult &&
+                        recentPostsResult.map((post, i) => (
+                            <Text key={i}>
+                                <Link as={NextLink} href={`/user/${post.postOwner}`}>
+                                    [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
+                                </Link>{" "}
+                                <Link as={NextLink} href={`/thread/${post.parentThreadId}`}>
+                                    {post.postContent}
+                                </Link>
+                            </Text>
+                        ))}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
