@@ -29,7 +29,7 @@ import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 import { useRouter } from "next/router";
-import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
+import { ThreadTableRow } from "@/components/ThreadTableRow";
 
 export default function Home() {
     const { chain } = useAccount();
@@ -227,23 +227,12 @@ export default function Home() {
                             <Tbody borderRight={`1px solid ${primaryColor}`}>
                                 {getThreadsByBoardResult &&
                                     getThreadsByBoardResult.map((thread, i) => (
-                                        <Tr borderTop={`1px solid ${primaryColor}`} key={i}>
-                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                                <Link as={NextLink} href={`/account/${thread.threadOwner}`}>
-                                                    <EnsNameOrAddress address={thread.threadOwner} shorten />
-                                                </Link>
-                                            </Td>
-                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
-                                                    {thread.threadTitle}
-                                                </Link>
-                                            </Td>
-                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
-                                                    threadFee here
-                                                </Link>
-                                            </Td>
-                                        </Tr>
+                                        <ThreadTableRow
+                                            threadOwner={thread.threadOwner}
+                                            threadId={thread.threadId}
+                                            threadTitle={thread.threadTitle}
+                                            key={i}
+                                        />
                                     ))}
                             </Tbody>
                         </Table>
