@@ -1,5 +1,7 @@
 import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
-import { Box, VStack, HStack, Text, chakra, Tooltip, Link, Image } from "@chakra-ui/react";
+import { Box, VStack, HStack, Text, chakra, Tooltip, Link, Image, Spacer } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+
 import { ColorsContext } from "@/config/ColorContext";
 import { useContext } from "react";
 import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
@@ -19,7 +21,7 @@ type PostProps = {
     mentionTo: bigint | string;
 };
 
-export default function Post({ post }: { post: PostProps }) {
+export default function Post({ post, isViewerModetator }: { post: PostProps; isViewerModetator?: boolean }) {
     const colors = useContext(ColorsContext);
     const primaryColor = colors[0];
     const bgColor = colors[1];
@@ -40,7 +42,7 @@ export default function Post({ post }: { post: PostProps }) {
         !post.isDeleted && (
             <Box>
                 <VStack spacing={2} align="start">
-                    <HStack justify="left">
+                    <HStack justify="space-between" w="full">
                         <Link as={NextLink} href={`/user/${post.postOwner}`}>
                             <Box border={`1px solid ${primaryColor}`}>
                                 {ensAvatar ? (
@@ -72,6 +74,8 @@ export default function Post({ post }: { post: PostProps }) {
                                 </Text>
                             </Link>
                         </Tooltip>
+                        <Spacer />
+                        {isViewerModetator && <DeleteIcon color={primaryColor} h={4} />}
                     </HStack>
                     <Text>{post.postContent}</Text>
                     <Text>[{convertTimestampToLocalTime(Number(post.timestamp))}]</Text>

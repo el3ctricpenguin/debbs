@@ -16,7 +16,7 @@ import Post from "@/components/Post";
 import { getDefaultBgColor, getDefaultPrimaryColor } from "@/constants/DefaultColors";
 
 export default function Thread() {
-    const { chain } = useAccount();
+    const { chain, address } = useAccount();
 
     const router = useRouter();
     const threadId = Number(router.query.threadId);
@@ -105,6 +105,8 @@ export default function Thread() {
         }
     };
 
+    const isViewerModerator = getThreadResult && getThreadResult[2] == address;
+
     const primaryColor = getDefaultPrimaryColor(chain && chain.id);
     const bgColor = getDefaultBgColor(chain && chain.id);
 
@@ -143,7 +145,8 @@ export default function Thread() {
                     </TableContainer>
 
                     <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
-                    {getPostsByThreadResult && getPostsByThreadResult.map((post, i) => <Post key={i} post={post} />)}
+                    {getPostsByThreadResult &&
+                        getPostsByThreadResult.map((post, i) => <Post key={i} post={post} isViewerModetator={isViewerModerator} />)}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Post</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
