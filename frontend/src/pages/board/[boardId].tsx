@@ -1,57 +1,62 @@
-import { BBSHeading } from "@/components/BBSHeading";
+import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { Button, FormControl, HStack, Input, Link, Text, VStack } from "@chakra-ui/react";
+import {
+    Button,
+    FormControl,
+    HStack,
+    Input,
+    Link,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Text,
+    Th,
+    Thead,
+    Tr,
+    useToast,
+    VStack,
+} from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
-import Table from "cli-table3";
+import { getDeBBSAddress } from "@/constants/ContractAddresses";
+import { deBbsAbi } from "@/generated";
+import { useAccount, useReadContract } from "wagmi";
+import { wagmiConfig } from "@/config/wagmi";
+import { useState } from "react";
+import { Addresses } from "@/constants/Addresses";
+import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { formatEther } from "viem";
+import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
+import { useRouter } from "next/router";
+import { ThreadTableRow } from "@/components/ThreadTableRow";
 
 export default function Home() {
-    // const boardResult = { boardTitle: "Ethereum", boardId: 0 };
-    const createThreadFee = 0.0001;
+    const { chain } = useAccount();
 
-    const threadsResult = [
-        {
-            threadId: 0,
-            account: "great-security.eth",
-            threadDescription: "I made a special anti-fraud wallet, Pizza Wallet.",
-            postCount: 120,
-        },
-        {
-            threadId: 0,
-            account: "0xd3ef...ad823",
-            threadDescription: "Where can I get WBTC at better price?",
-            postCount: 21,
-        },
-        {
-            threadId: 0,
-            account: "house-boy.eth",
-            threadDescription: "I’m crypto bilionaire living with my mom",
-            postCount: 6,
-        },
-    ];
+    const router = useRouter();
+    const boardId = Number(router.query.boardId);
+    console.log("boardId", boardId);
 
-    const table = new Table({
-        head: ["Account", "Title", "Earned Fees"],
-        colWidths: [20, 60, 15],
-        chars: {
-            top: "",
-            "top-mid": "",
-            "top-left": "",
-            "top-right": "",
-            bottom: "",
-            "bottom-mid": "",
-            "bottom-left": "",
-            "bottom-right": "",
-        },
+    const { data: getBoardResult } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "getBoard",
+        abi: deBbsAbi,
+        args: [BigInt(boardId ? boardId : 0)],
     });
-    table.push(
-        ...threadsResult.map(({ account, threadDescription, postCount }) => [
-            account,
-            threadDescription,
-            (Math.floor(createThreadFee * postCount * 10000) / 10000).toFixed(4).toString() + " ETH",
-        ])
-    );
-    console.log(table.toString());
+
+    const { data: getThreadsByBoardResult, refetch: refetchGetThreadsByBoard } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        abi: deBbsAbi,
+        functionName: "getThreadsByBoard",
+        args: [BigInt(boardId ? boardId : 0)],
+    });
+
+    const { data: createThreadFee } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "createThreadFee",
+        abi: deBbsAbi,
+    });
 
     const recentPostsResult = [
         {
@@ -71,9 +76,67 @@ export default function Home() {
         },
     ];
 
+    const [formData, setFormData] = useState({
+        threadTitle: "",
+        frontendOwnerAddress: Addresses.frontendOwner,
+    });
+    console.log(formData);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const [isTxWaiting, setIsTxWaiting] = useState(false);
+    const toast = useToast();
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            setIsTxWaiting(true);
+            const createThreadTx = await writeContract(wagmiConfig, {
+                address: getDeBBSAddress(chain && chain.id),
+                abi: deBbsAbi,
+                functionName: "createThread",
+                args: [BigInt(boardId), formData.threadTitle, formData.frontendOwnerAddress],
+                value: BigInt(createThreadFee ? createThreadFee : BigInt(0)),
+            });
+            if (!createThreadTx) {
+                throw new Error("Create Thread Tx rejected");
+            }
+            console.log("txId: ", createThreadTx);
+            const createThreadReceipt = await waitForTransactionReceipt(wagmiConfig, {
+                hash: createThreadTx,
+            });
+            if (createThreadReceipt.status === "reverted") {
+                throw new Error("Create Thread Tx failed");
+            }
+            refetchGetThreadsByBoard();
+            toast({
+                title: "Create Thread Tx Success",
+                description: createThreadTx,
+                status: "success",
+                variant: "subtle",
+                isClosable: true,
+            });
+        } catch (e) {
+            const errorMessage = e instanceof Error ? `${e.message}` : `${e}`;
+            toast({
+                title: "Create Thread Tx Failed",
+                description: errorMessage,
+                status: "error",
+                variant: "subtle",
+                isClosable: true,
+            });
+        } finally {
+            setIsTxWaiting(false);
+        }
+    };
+
     const primaryColor = "white";
     const bgColor = "#3355FF";
 
+    console.log("getBoardResult", getBoardResult);
     return (
         <>
             <Head>
@@ -83,8 +146,36 @@ export default function Home() {
             </Head>
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
-                    <BBSHeading headingProps={{ mb: 2 }}>&gt; Create A Thread</BBSHeading>
-                    <FormControl as="form">
+                    <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Board: ${getBoardResult && getBoardResult[2]}`}</BBSHeadingTitle>
+                    <TableContainer>
+                        <Table size="sm" w={500}>
+                            <Tbody borderRight={`1px solid ${primaryColor}`}>
+                                <Tr borderTop={`1px solid ${primaryColor}`}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        moderator
+                                    </Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        {getBoardResult && getBoardResult[1]}
+                                    </Td>
+                                </Tr>
+                                {/* <Tr>
+                                    <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[]}</Td>
+                                </Tr> */}
+                                <Tr>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        time created
+                                    </Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        {getBoardResult && convertTimestampToLocalTime(Number(getBoardResult[3].toString()))}
+                                    </Td>
+                                </Tr>
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
+
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
+                    <FormControl as="form" onSubmit={handleSubmit}>
                         <VStack align="start" spacing={2}>
                             <Input
                                 variant="bbs"
@@ -95,22 +186,58 @@ export default function Home() {
                                 _placeholder={{ color: "whiteAlpha.700", fontStyle: "italic" }}
                                 isRequired
                                 name="threadTitle"
+                                value={formData.threadTitle}
+                                onChange={handleChange}
                             />
                             <HStack>
-                                <Button variant="bbs" bgColor={primaryColor} color={bgColor} type="submit">
+                                <Button
+                                    variant="bbs"
+                                    bgColor={primaryColor}
+                                    color={bgColor}
+                                    type="submit"
+                                    isLoading={isTxWaiting}
+                                    loadingText="Creating A Thread..."
+                                    _loading={{
+                                        _hover: {
+                                            opacity: 0.75,
+                                            bgColor: primaryColor,
+                                        },
+                                    }}
+                                >
                                     Create A Thread!
                                 </Button>
                                 <Text fontSize={14} display="inline-block" mx={4} fontStyle="italic">
-                                    You have to pay {createThreadFee} ETH
+                                    You have to pay {formatEther(createThreadFee ? createThreadFee : BigInt(0))} ETH
                                 </Text>
                             </HStack>
                         </VStack>
                     </FormControl>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
-                    <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize={11}>
-                        {table.toString()}
-                    </Text>
+
+                    <TableContainer>
+                        <Table size="sm">
+                            <Thead>
+                                <Tr>
+                                    <Th color={primaryColor}>moderator</Th>
+                                    <Th color={primaryColor}>title</Th>
+                                    <Th color={primaryColor}>earned fee</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody borderRight={`1px solid ${primaryColor}`}>
+                                {getThreadsByBoardResult &&
+                                    getThreadsByBoardResult.map((thread, i) => (
+                                        <ThreadTableRow
+                                            threadOwner={thread.threadOwner}
+                                            threadId={thread.threadId}
+                                            threadTitle={thread.threadTitle}
+                                            createThreadFee={createThreadFee ? createThreadFee : BigInt(0)}
+                                            key={i}
+                                        />
+                                    ))}
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
                     {recentPostsResult.map((post, i) => (

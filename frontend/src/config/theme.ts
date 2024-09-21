@@ -44,12 +44,6 @@ const createTheme = () =>
                         _active: {
                             opacity: 0.75,
                         },
-                        _loading: {
-                            _hover: {
-                                opacity: 0.75,
-                                bgColor: "white",
-                            },
-                        },
                     },
                 },
             }),

@@ -10,7 +10,7 @@ export const BBSHeadingButton = ({ children, buttonProps }: { children: string |
         <Button
             fontSize={18}
             fontStyle="italic"
-            border="2px solid #fff"
+            border={`2px solid ${primaryColor}`}
             display="inline-block"
             px={4}
             pt={1}
