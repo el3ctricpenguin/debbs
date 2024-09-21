@@ -1,12 +1,13 @@
 import { BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { chakra, Table, TableContainer, Tbody, Td, Tr } from "@chakra-ui/react";
+import { Box, chakra, HStack, Table, TableContainer, Tbody, Td, Tr, Image } from "@chakra-ui/react";
 import Head from "next/head";
-import { useEnsName, useEnsText } from "wagmi";
+import { useEnsAvatar, useEnsName, useEnsText } from "wagmi";
 import { useRouter } from "next/router";
 import useEnsNameOrAddress from "@/hooks/useEnsNameOrAddress";
 import { getAddress, zeroAddress } from "viem";
 import { normalize } from "path";
+import * as jdenticon from "jdenticon";
 
 export default function User() {
     const router = useRouter();
@@ -23,6 +24,13 @@ export default function User() {
         address: address,
         chainId: 1,
     });
+
+    const svgString = jdenticon.toSvg(address, 100);
+    const { data: ensAvatar } = useEnsAvatar({
+        name: normalize(String(ensName)),
+        chainId: 1,
+    });
+
     const { data: descriptionResult } = useEnsText({
         name: normalize(String(ensName)),
         key: "description",
@@ -68,30 +76,41 @@ export default function User() {
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
                     <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> User: ${displayName}`}</BBSHeadingTitle>
-                    <TableContainer>
-                        <Table size="sm" w={500}>
-                            <Tbody borderRight={`1px solid ${primaryColor}`}>
-                                <Tr borderTop={`1px solid ${primaryColor}`}>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                        address
-                                    </Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                        {address}
-                                    </Td>
-                                </Tr>
-                                {ensData.map((data, i) => (
-                                    <Tr key={i}>
+                    <HStack align="start">
+                        <Box border={`2px solid ${primaryColor}`} display="inline-block">
+                            {ensAvatar ? (
+                                <Image src={String(ensAvatar)} alt={String(ensName)} w={100} />
+                            ) : (
+                                <Box w={100} h={100} dangerouslySetInnerHTML={{ __html: svgString }} />
+                            )}
+                        </Box>
+                        <TableContainer>
+                            <Table size="sm" w={500}>
+                                <Tbody borderRight={`1px solid ${primaryColor}`}>
+                                    <Tr borderTop={`1px solid ${primaryColor}`}>
                                         <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                            {data[0]}
+                                            address
                                         </Td>
                                         <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                            {data[1]}
+                                            {address}
                                         </Td>
                                     </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
+                                    {ensData.map((data, i) => (
+                                        <Tr key={i}>
+                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                {data[0]}
+                                            </Td>
+                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                {data[0] === "twitter" && "@"}
+                                                {data[1]}
+                                            </Td>
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        </TableContainer>
+                    </HStack>
+                    <Hr borderStyle="dashed" my={2} />
                 </>
             </BBSLayout>
         </>
