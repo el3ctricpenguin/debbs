@@ -44,7 +44,7 @@ contract deBBS {
     event BoardCreated(uint256 boardId, address boardOwner, string boardTitle, uint256 timestamp);
     event ThreadCreated(uint256 threadId, address threadOwner, string threadTitle, uint256 parentBoardId, uint256 timestamp);
     event PostCreated(uint256 postId, address postOwner, string postContent, uint256 parentThreadId, uint256 timestamp);
-    event Mention(address mentionFrom, address mentionTo, string replyContent, uint256 postIdFrom, uint256 parentThreadId, uint256 timestamp);
+    event Mention(uint256 postIdFrom, uint256 postIdTo, address mentionFrom, address mentionTo, string replyContent, uint256 parentThreadId, uint256 timestamp);
 
     mapping(uint256 => uint256[]) public boardToThreads; 
     mapping(uint256 => uint256[]) public threadToPosts; 
@@ -105,6 +105,8 @@ contract deBBS {
 
         uint256 postId = posts.length;
 
+        require(mentionTo <= postId, "You can't mention future posts.");
+
         posts.push(Post({
             postId: postId,
             parentThreadId: threadId,
@@ -114,6 +116,10 @@ contract deBBS {
             isDeleted: false,
             mentionTo: mentionTo
         }));
+
+        if(mentionTo != postId) {
+            emit Mention(postId, mentionTo, msg.sender, posts[mentionTo].postOwner ,postContent, threadId, block.timestamp);
+        }
 
         threadToPosts[threadId].push(postId);
         _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
