@@ -33,6 +33,7 @@ import NextLink from "next/link";
 import { useState } from "react";
 import useSWR from "swr";
 import { formatEther, getAddress } from "viem";
+import { sepolia } from "viem/chains";
 import { useAccount, useReadContract } from "wagmi";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 
@@ -219,30 +220,34 @@ export default function Home() {
                     <Hr borderStyle="dashed" my={2} borderColor={primaryColor} />
                     <Text>
                         {getBoardsResult &&
-                            getBoardsResult.map((board, i) => (
-                                <>
-                                    {i == 0 ? "" : " / "}
-                                    <Tooltip
-                                        label={
-                                            <Box color={primaryColor}>
-                                                <Text fontWeight={900}>&gt; {board.boardTitle}</Text>
-                                                <Text>[moderator] {board.boardOwner}</Text>
-                                                <Text>[description] {board.description}</Text>
-                                            </Box>
-                                        }
-                                        placement="bottom-start"
-                                        bgColor={bgColor}
-                                        boxShadow="none"
-                                        border={`1px solid ${primaryColor}`}
-                                        borderRadius={0}
-                                        offset={[0, 4]}
-                                    >
-                                        <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
-                                            {board.boardTitle}
-                                        </Link>
-                                    </Tooltip>
-                                </>
-                            ))}
+                            getBoardsResult.map((board, i) =>
+                                chain && chain.id == sepolia.id && i == 3 ? (
+                                    <></>
+                                ) : (
+                                    <>
+                                        {i == 0 ? "" : " / "}
+                                        <Tooltip
+                                            label={
+                                                <Box color={primaryColor}>
+                                                    <Text fontWeight={900}>&gt; {board.boardTitle}</Text>
+                                                    <Text>[moderator] {board.boardOwner}</Text>
+                                                    <Text>[description] {board.description}</Text>
+                                                </Box>
+                                            }
+                                            placement="bottom-start"
+                                            bgColor={bgColor}
+                                            boxShadow="none"
+                                            border={`1px solid ${primaryColor}`}
+                                            borderRadius={0}
+                                            offset={[0, 4]}
+                                        >
+                                            <Link as={NextLink} href={`/board/${board.boardId}`} key={i}>
+                                                {board.boardTitle}
+                                            </Link>
+                                        </Tooltip>
+                                    </>
+                                )
+                            )}
                     </Text>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
