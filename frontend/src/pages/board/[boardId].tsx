@@ -4,9 +4,27 @@ import { Button, FormControl, HStack, Input, Link, Text, VStack } from "@chakra-
 import Head from "next/head";
 import NextLink from "next/link";
 import Table from "cli-table3";
+import { getDeBBSAddress } from "@/constants/ContractAddresses";
+import { deBbsAbi } from "@/generated";
+import { useAccount, useReadContract } from "wagmi";
 
 export default function Home() {
-    // const boardResult = { boardTitle: "Ethereum", boardId: 0 };
+    const { chain } = useAccount();
+    const { data: getBoardsResult } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        functionName: "getBoards",
+        abi: deBbsAbi,
+    });
+
+    const boardId = 0;
+
+    const { data: getThreadsByBoardResult } = useReadContract({
+        address: getDeBBSAddress(chain && chain.id),
+        abi: deBbsAbi,
+        functionName: "getThreadsByBoard",
+        args: [BigInt(String(boardId ? boardId : 0))],
+    });
+
     const createThreadFee = 0.0001;
 
     const threadsResult = [
@@ -110,6 +128,9 @@ export default function Home() {
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Threads</BBSHeading>
                     <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize={11}>
                         {table.toString()}
+                    </Text>
+                    <Text>
+                        {getThreadsByBoardResult && getThreadsByBoardResult.map((thread, i) => <li key={i}>{thread.threadTitle}</li>)}
                     </Text>
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
