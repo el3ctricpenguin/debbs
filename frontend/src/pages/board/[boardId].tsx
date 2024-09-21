@@ -167,7 +167,7 @@ export default function Board() {
                                         time created
                                     </Td>
                                     <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                        {getBoardResult && convertTimestampToLocalTime(Number(getBoardResult[3].toString()))}
+                                        {getBoardResult && convertTimestampToLocalTime(Number(getBoardResult[6].toString()))}
                                     </Td>
                                 </Tr>
                             </Tbody>
