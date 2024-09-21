@@ -1,9 +1,25 @@
 import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { Button, FormControl, HStack, Input, Link, Text, useToast, VStack } from "@chakra-ui/react";
+import {
+    Button,
+    FormControl,
+    HStack,
+    Input,
+    Link,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Text,
+    Th,
+    Thead,
+    Tr,
+    useToast,
+    VStack,
+} from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
-import Table from "cli-table3";
+import TableCLI from "cli-table3";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
@@ -12,6 +28,7 @@ import { useState } from "react";
 import { Addresses } from "@/constants/Addresses";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
+import { convertTimestampToLocalTime } from "@/utils/convertTimestampToLocalTime";
 
 export default function Home() {
     const { chain } = useAccount();
@@ -57,7 +74,7 @@ export default function Home() {
         },
     ];
 
-    const table = new Table({
+    const table = new TableCLI({
         head: ["Account", "Title", "Earned Fees"],
         colWidths: [20, 60, 15],
         chars: {
@@ -169,8 +186,34 @@ export default function Home() {
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
                     <BBSHeadingTitle headingProps={{ mb: 2 }}>{`> Board: ${getBoardResult && getBoardResult[2]}`}</BBSHeadingTitle>
+                    <TableContainer>
+                        <Table size="sm" w={500}>
+                            <Tbody borderRight={`1px solid ${primaryColor}`}>
+                                <Tr borderTop={`1px solid ${primaryColor}`}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        moderator
+                                    </Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        {getBoardResult && getBoardResult[1]}
+                                    </Td>
+                                </Tr>
+                                {/* <Tr>
+                                    <Td borderLeft={`1px solid ${primaryColor}`}>description</Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`}>{getBoardResult && getBoardResult[]}</Td>
+                                </Tr> */}
+                                <Tr w={400}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        time created
+                                    </Td>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                        {getBoardResult && convertTimestampToLocalTime(Number(getBoardResult[3].toString()))}
+                                    </Td>
+                                </Tr>
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
 
-                    <BBSHeading headingProps={{ mb: 2 }}>&gt; Create A Thread</BBSHeading>
+                    <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Create A Thread</BBSHeading>
                     <FormControl as="form" onSubmit={handleSubmit}>
                         <VStack align="start" spacing={2}>
                             <Input
