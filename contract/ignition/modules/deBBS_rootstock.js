@@ -1,7 +1,7 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-const deBBSModule = buildModule("deBBSModule", (m) => {
-  const deBBS = m.contract("deBBS");
+const deBBSrskModule = buildModule("deBBSrskModule", (m) => {
+  const deBBS = m.contract("deBBS_rootstock");
 
   // m.call(deBBS, "createBoard", ["Linea", "Let's talk about Linea", "#000000", "#FFFFFF", "0x391EDb04A93549fAf95BeeD8244B7DD494003c80"],
   //   {value: ethers.parseEther("0.01"), id:"a01_CreateBoard" });
@@ -22,5 +22,5 @@ const deBBSModule = buildModule("deBBSModule", (m) => {
   return { deBBS };
 });
 
-module.exports = deBBSModule;
+module.exports = deBBSrskModule;
 
