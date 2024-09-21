@@ -8,7 +8,7 @@ export const wagmiConfig = createConfig({
     transports: {
         [mainnet.id]: http(),
         [sepolia.id]: http("https://ethereum-sepolia-rpc.publicnode.com"),
-        [lineaSepolia.id]: http("https://ethereum-sepolia-rpc.publicnode.com"),
+        [lineaSepolia.id]: http(),
     },
     ssr: true,
 });
