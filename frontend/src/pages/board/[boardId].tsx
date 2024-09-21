@@ -78,7 +78,7 @@ export default function Board() {
     });
 
     const query = `{
-        postCreateds(first:3, where: {},orderBy: timestamp, orderDirection: desc) {
+        postCreateds(first:3, where: {isDeleted: false},orderBy: timestamp, orderDirection: desc) {
           postId
           parentThreadId
           postOwner
@@ -167,18 +167,18 @@ export default function Board() {
                         <Table size="sm" w={500}>
                             <Tbody borderRight={`1px solid ${primaryColor}`}>
                                 <Tr borderTop={`1px solid ${primaryColor}`}>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                                         moderator
                                     </Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                                         {getBoardResult && getBoardResult[1]}
                                     </Td>
                                 </Tr>
                                 <Tr>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor} py={1}>
                                         description
                                     </Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderColor={primaryColor} py={1}>
                                         {getBoardResult && getBoardResult[2]}
                                     </Td>
                                 </Tr>
@@ -187,10 +187,11 @@ export default function Board() {
                                         borderLeft={`1px solid ${primaryColor}`}
                                         borderBottom={`1px solid ${primaryColor}`}
                                         borderTop={`1px solid ${primaryColor}`}
+                                        py={1}
                                     >
                                         time created
                                     </Td>
-                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
                                         {getBoardResult && convertTimestampToLocalTime(Number(getBoardResult[6].toString()))}
                                     </Td>
                                 </Tr>

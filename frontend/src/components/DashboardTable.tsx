@@ -3,8 +3,9 @@ import { Tr, Td, Table, TableContainer, Tbody } from "@chakra-ui/react";
 import { useContext } from "react";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { useAccount } from "wagmi";
+import { formatEther } from "viem";
 
-export function DashboardTable() {
+export function DashboardTable({ totalFees, userCount }: { totalFees?: bigint; userCount: number }) {
     const colors = useContext(ColorsContext);
     const primaryColor = colors[0];
     // const bgColor = colors[1];
@@ -35,7 +36,7 @@ export function DashboardTable() {
                             total users
                         </Td>
                         <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
-                            7
+                            {userCount}
                         </Td>
                     </Tr>
                     <Tr borderTop={`1px solid ${primaryColor}`}>
@@ -43,7 +44,7 @@ export function DashboardTable() {
                             total fee earned
                         </Td>
                         <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`} py={1}>
-                            [not implemented]
+                            {totalFees ? formatEther(totalFees) : "0"} ETH
                         </Td>
                     </Tr>
                 </Tbody>
