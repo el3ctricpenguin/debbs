@@ -123,7 +123,7 @@ export default function Home() {
                                 <Link as={NextLink} href={`/user/${thread.threadOwner}`}>
                                     [<EnsNameOrAddress address={getAddress(thread.threadOwner)} shorten />]
                                 </Link>{" "}
-                                <Link as={NextLink} href={`/post/${thread.threadId}`}>
+                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
                                     {thread.threadTitle}
                                 </Link>
                             </Text>
