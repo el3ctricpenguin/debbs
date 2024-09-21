@@ -27,6 +27,24 @@ export const deBbsAbi = [
         indexed: false,
       },
       {
+        name: 'description',
+        internalType: 'string',
+        type: 'string',
+        indexed: false,
+      },
+      {
+        name: 'primaryColor',
+        internalType: 'string',
+        type: 'string',
+        indexed: false,
+      },
+      {
+        name: 'bgColor',
+        internalType: 'string',
+        type: 'string',
+        indexed: false,
+      },
+      {
         name: 'timestamp',
         internalType: 'uint256',
         type: 'uint256',
@@ -95,6 +113,12 @@ export const deBbsAbi = [
         indexed: false,
       },
       {
+        name: 'parentThreadId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
         name: 'postOwner',
         internalType: 'address',
         type: 'address',
@@ -107,13 +131,14 @@ export const deBbsAbi = [
         indexed: false,
       },
       {
-        name: 'parentThreadId',
+        name: 'timestamp',
         internalType: 'uint256',
         type: 'uint256',
         indexed: false,
       },
+      { name: 'isDeleted', internalType: 'bool', type: 'bool', indexed: false },
       {
-        name: 'timestamp',
+        name: 'mentionTo',
         internalType: 'uint256',
         type: 'uint256',
         indexed: false,
@@ -132,6 +157,12 @@ export const deBbsAbi = [
         indexed: false,
       },
       {
+        name: 'parentBoardId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
         name: 'threadOwner',
         internalType: 'address',
         type: 'address',
@@ -141,12 +172,6 @@ export const deBbsAbi = [
         name: 'threadTitle',
         internalType: 'string',
         type: 'string',
-        indexed: false,
-      },
-      {
-        name: 'parentBoardId',
-        internalType: 'uint256',
-        type: 'uint256',
         indexed: false,
       },
       {
