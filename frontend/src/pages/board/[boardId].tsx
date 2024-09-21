@@ -1,6 +1,6 @@
 import { BBSHeading } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
-import { Button, FormControl, HStack, Input, Link, Text, VStack } from "@chakra-ui/react";
+import { Button, FormControl, HStack, Input, Link, Text, useToast, VStack } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import Table from "cli-table3";
@@ -110,6 +110,7 @@ export default function Home() {
         });
     };
 
+    const toast = useToast();
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -130,9 +131,22 @@ export default function Home() {
             if (createThreadReceipt.status === "reverted") {
                 throw new Error("Create Thread Tx failed");
             }
-            console.log("success");
+            toast({
+                title: "Create Thread Tx Success",
+                description: createThreadTx,
+                status: "success",
+                variant: "subtle",
+                isClosable: true,
+            });
         } catch (e) {
-            console.log(e);
+            const errorMessage = e instanceof Error ? `${e.message}` : `${e}`;
+            toast({
+                title: "Create Thread Tx Failed",
+                description: errorMessage,
+                status: "error",
+                variant: "subtle",
+                isClosable: true,
+            });
         }
     };
 
