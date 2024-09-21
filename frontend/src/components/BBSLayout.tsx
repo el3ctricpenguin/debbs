@@ -1,15 +1,19 @@
-import { Box, HStack, Heading, Spacer } from "@chakra-ui/react";
+import { Box, HStack, Heading, Spacer, useDisclosure } from "@chakra-ui/react";
 import { ReactElement, useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { BBSHeadingButton } from "./BBSHeadingButton";
 import shortenAddress from "@/utils/shortenAddress";
 import NextLink from "next/link";
 import { ColorsContext } from "@/config/ColorContext";
+import { ChainModal } from "./ChainModal";
 
 export default function BBSLayout({ children, primaryColor, bgColor }: { children: ReactElement; primaryColor: string; bgColor: string }) {
-    const { address, isConnected } = useAccount();
+    const { address, isConnected, chain } = useAccount();
     const { connect, connectors } = useConnect();
     const { disconnect } = useDisconnect();
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     useEffect(() => {
         document.body.style.backgroundColor = bgColor;
     }, [bgColor]);
@@ -35,7 +39,7 @@ export default function BBSLayout({ children, primaryColor, bgColor }: { childre
                             &gt;&gt;deBBS
                         </Heading>
                         <Spacer />
-                        <BBSHeadingButton>Ethereum Network</BBSHeadingButton>
+                        <BBSHeadingButton buttonProps={{ onClick: onOpen }}>{`${chain && chain.name} Network`}</BBSHeadingButton>
                         <BBSHeadingButton
                             buttonProps={{ onClick: !isConnected ? () => connect({ connector: connectors[0] }) : () => disconnect() }}
                         >
@@ -47,6 +51,7 @@ export default function BBSLayout({ children, primaryColor, bgColor }: { childre
                     </Box>
                 </Box>
             </Box>
+            <ChainModal isOpen={isOpen} onClose={onClose} />
         </ColorsContext.Provider>
     );
 }

@@ -3,7 +3,7 @@ import { mainnet, sepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 
 export const wagmiConfig = createConfig({
-    chains: [sepolia, mainnet],
+    chains: [mainnet, sepolia],
     connectors: [injected()],
     transports: {
         [mainnet.id]: http(),
