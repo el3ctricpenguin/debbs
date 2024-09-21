@@ -26,7 +26,7 @@ export default function Post({ post }: { post: PostProps }) {
 
     const Hr = chakra("hr");
 
-    const svgString = jdenticon.toSvg(post.postOwner, 20);
+    const svgString = jdenticon.toSvg(post.postOwner, 28);
 
     const { data: ensName } = useEnsName({
         address: getAddress(post.postOwner),
@@ -43,9 +43,9 @@ export default function Post({ post }: { post: PostProps }) {
                     <Link as={NextLink} href={`/user/${post.postOwner}`}>
                         <Box border={`1px solid ${primaryColor}`}>
                             {ensAvatar ? (
-                                <Image src={String(ensAvatar)} alt={String(ensName)} w={5} />
+                                <Image src={String(ensAvatar)} alt={String(ensName)} w={7} />
                             ) : (
-                                <Box w={5} h={5} dangerouslySetInnerHTML={{ __html: svgString }} />
+                                <Box w={7} h={7} dangerouslySetInnerHTML={{ __html: svgString }} />
                             )}
                         </Box>
                     </Link>
