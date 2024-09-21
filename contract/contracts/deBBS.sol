@@ -30,6 +30,7 @@ contract deBBS {
         address postOwner;
         string postContent;
         uint256 timestamp;
+        bool isDeleted;
     }
 
     Board[] public boards;
@@ -107,7 +108,8 @@ contract deBBS {
             parentThreadId: threadId,
             postOwner: msg.sender,
             postContent: postContent,
-            timestamp: block.timestamp
+            timestamp: block.timestamp,
+            isDeleted: false
         }));
 
         threadToPosts[threadId].push(postId);
@@ -120,6 +122,18 @@ contract deBBS {
         require(isAddressBanned(threadId, targetUserToBan) == false, "The User is already banned.");
 
         threads[threadId].bannedUsers.push(targetUserToBan);
+    }
+
+    function deletePost(uint256 postId) public {
+
+        address postOwner = posts[postId].postOwner;
+
+        uint256 parentThreadId = posts[postId].parentThreadId;
+        address parentThreadAddress = threads[parentThreadId].threadOwner;
+
+        require(msg.sender == postOwner || msg.sender == parentThreadAddress, "You don't have a permission to delete this post.");
+        posts[postId].isDeleted = true;
+
     }
 
     function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {

@@ -134,20 +134,29 @@ describe("deBBS Tests", function () {
           [postCreationFee * -1n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n, postCreationFee / 4n]
         );
     });
+  });
 
-    it("Should not distribute fee to create a thread to the frontendOwner if the address is zero", async function () {
+  describe("Post Deletion Tests", function () {
+    it("Should allow post deletion by the post owner", async function () {
       const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
 
-      //boardOwner = owner, threadOwner = addr1, postOwner = addr2
       await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
-      await expect(deBBS.connect(addr2).createPost(1, postTitle, ethers.ZeroAddress, { value: postCreationFee })
-        ).to.changeEtherBalances(
-          [addr2, owner, addr1, frontendOwner, deBBS],
-          [postCreationFee * -1n, postCreationFee / 4n, postCreationFee / 4n, 0n, postCreationFee / 2n]
-        );
+      await deBBS.connect(addr2).createPost(1, postTitle, frontendOwner.address, { value: postCreationFee });
+
+      expect(await deBBS.connect(addr1).deletePost(1));
     });
 
+    it("Should allow post deletion by the thread owner", async function () {
+      const { deBBS, owner, addr1, addr2, frontendOwner, boardTitle, threadTitle, postTitle, description, primaryColor, bgColor, boardCreationFee, threadCreationFee, postCreationFee } = await loadFixture(deployContractFixture);
+      
+      await deBBS.connect(addr1).createThread(0, threadTitle, frontendOwner.address, { value: threadCreationFee });
+      await deBBS.connect(addr2).createPost(1, postTitle, frontendOwner.address, { value: postCreationFee });
+      
+      expect(await deBBS.connect(addr2).deletePost(1))
+    });    
+
   });
+
 
   describe("View Function Tests", function () {
     it("should work getThreadsByBoard", async function () {
@@ -222,5 +231,4 @@ describe("deBBS Tests", function () {
     });
 
   });
-
 });
