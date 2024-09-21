@@ -6,7 +6,7 @@ import NextLink from "next/link";
 import Table from "cli-table3";
 
 export default function Home() {
-    const boardResult = { boardTitle: "Ethereum", boardId: 0 };
+    // const boardResult = { boardTitle: "Ethereum", boardId: 0 };
     const createThreadFee = 0.0001;
 
     const threadsResult = [
