@@ -129,17 +129,20 @@ export default function User() {
                                             {address}
                                         </Td>
                                     </Tr>
-                                    {ensData.map((data, i) => (
-                                        <Tr key={i}>
-                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                                {data[0]}
-                                            </Td>
-                                            <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
-                                                {data[0] === "twitter" && "@"}
-                                                {data[1]}
-                                            </Td>
-                                        </Tr>
-                                    ))}
+                                    {ensData.map(
+                                        (data, i) =>
+                                            data[1] && (
+                                                <Tr key={i}>
+                                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                        {data[0]}
+                                                    </Td>
+                                                    <Td borderLeft={`1px solid ${primaryColor}`} borderBottom={`1px solid ${primaryColor}`}>
+                                                        {data[0] === "twitter" && "@"}
+                                                        {data[1]}
+                                                    </Td>
+                                                </Tr>
+                                            )
+                                    )}
                                 </Tbody>
                             </Table>
                         </TableContainer>
