@@ -7,9 +7,6 @@ type BoardCreated @entity(immutable: true) {
   primaryColor: String! # string
   bgColor: String! # string
   timestamp: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
 
 type Mention @entity(immutable: true) {
@@ -21,9 +18,6 @@ type Mention @entity(immutable: true) {
   replyContent: String! # string
   parentThreadId: BigInt! # uint256
   timestamp: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
 
 type PostCreated @entity(immutable: true) {
@@ -35,9 +29,7 @@ type PostCreated @entity(immutable: true) {
   timestamp: BigInt! # uint256
   isDeleted: Boolean! # bool
   mentionTo: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+  count: Int!
 }
 
 type ThreadCreated @entity(immutable: true) {
@@ -47,8 +39,4 @@ type ThreadCreated @entity(immutable: true) {
   threadOwner: Bytes! # address
   threadTitle: String! # string
   timestamp: BigInt! # uint256
-  bannedUsers: [Bytes!]! # address[]
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
