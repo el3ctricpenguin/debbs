@@ -117,6 +117,7 @@ contract deBBS {
 
     function banUser(uint256 threadId, address targetUserToBan) public {
         require(msg.sender == threads[threadId].threadOwner, "Only the thread owner can ban users.");
+        require(isAddressBanned(threadId, targetUserToBan) == false, "The User is already banned.");
 
         threads[threadId].bannedUsers.push(targetUserToBan);
     }
@@ -241,6 +242,16 @@ contract deBBS {
 
     function getPostsCountByThread(uint threadId) public view returns (uint256) {
         return threadToPosts[threadId].length;
+    }
+
+    function isAddressBanned(uint256 threadId, address userAddress) public view returns (bool) {
+        Thread memory thread = threads[threadId];
+        for (uint256 i = 0; i < thread.bannedUsers.length; i++) {
+            if (thread.bannedUsers[i] == userAddress) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
