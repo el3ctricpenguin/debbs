@@ -7,8 +7,10 @@ import Table from "cli-table3";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
 import { useAccount, useReadContract } from "wagmi";
+import { wagmiConfig } from "@/config/wagmi";
 import { useState } from "react";
 import { Addresses } from "@/constants/Addresses";
+import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { formatEther } from "viem";
 
 export default function Home() {
@@ -108,6 +110,32 @@ export default function Home() {
         });
     };
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const createThreadTx = await writeContract(wagmiConfig, {
+                address: getDeBBSAddress(chain && chain.id),
+                abi: deBbsAbi,
+                functionName: "createThread",
+                args: [BigInt(boardId), formData.threadTitle, formData.frontendOwnerAddress],
+                value: BigInt(createThreadFee ? createThreadFee : BigInt(0)),
+            });
+            if (!createThreadTx) {
+                throw new Error("Create Thread Tx rejected");
+            }
+            console.log("txId: ", createThreadTx);
+            const createThreadReceipt = await waitForTransactionReceipt(wagmiConfig, {
+                hash: createThreadTx,
+            });
+            if (createThreadReceipt.status === "reverted") {
+                throw new Error("Create Thread Tx failed");
+            }
+            console.log("success");
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
     const primaryColor = "white";
     const bgColor = "#3355FF";
 
@@ -121,7 +149,7 @@ export default function Home() {
             <BBSLayout primaryColor={primaryColor} bgColor={bgColor}>
                 <>
                     <BBSHeading headingProps={{ mb: 2 }}>&gt; Create A Thread</BBSHeading>
-                    <FormControl as="form">
+                    <FormControl as="form" onSubmit={handleSubmit}>
                         <VStack align="start" spacing={2}>
                             <Input
                                 variant="bbs"
