@@ -39,9 +39,7 @@ export const ChainModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                                     },
                                     isLoading: isPending && selectedNetwork == i,
                                     loadingText: chain.name,
-                                    spinner: <Spinner size="xs" display="inline-block" />,
-                                    // FIX ME: Spinner style
-                                    display: "inline-block",
+                                    spinner: <Spinner size="xs" />,
                                 }}
                                 key={i}
                             >
