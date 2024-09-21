@@ -137,7 +137,7 @@ export default function Home() {
                                 <Link as={NextLink} href={`/user/${post.postOwner}`}>
                                     [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
                                 </Link>{" "}
-                                <Link as={NextLink} href={`/post/${post.postId}`}>
+                                <Link as={NextLink} href={`/thread/${post.parentThreadId}`}>
                                     {post.postContent}
                                 </Link>
                             </Text>
