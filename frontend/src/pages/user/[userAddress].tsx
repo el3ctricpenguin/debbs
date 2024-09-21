@@ -8,6 +8,23 @@ import useEnsNameOrAddress from "@/hooks/useEnsNameOrAddress";
 import { getAddress, zeroAddress } from "viem";
 import { normalize } from "path";
 import * as jdenticon from "jdenticon";
+import useSWR from "swr";
+import { theGraphFetcher } from "@/utils/theGraphFetcher";
+import Post from "@/components/Post";
+
+type theGraphResponse = {
+    data: {
+        postCreateds: {
+            postId: string;
+            parentThreadId: string;
+            postOwner: string;
+            postContent: string;
+            timestamp: string;
+            isDeleted: boolean;
+            mentionTo: string;
+        }[];
+    };
+};
 
 export default function User() {
     const router = useRouter();
@@ -65,6 +82,21 @@ export default function User() {
         ["discord", discordResult],
     ];
 
+    const query = `{
+        postCreateds(first: 10, where: {postOwner: "${address}"}) {
+          postId
+          parentThreadId
+          postOwner
+          postContent
+          timestamp
+          isDeleted
+          mentionTo
+        }
+      }`;
+
+    const { data: theGraphResult } = useSWR<theGraphResponse>(query, theGraphFetcher);
+    console.log(theGraphResult);
+
     const Hr = chakra("hr");
     return (
         <>
@@ -113,6 +145,9 @@ export default function User() {
                     {/* implement The Graph data */}
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts by the User</BBSHeading>
                     <Hr borderStyle="dashed" my={2} />
+                    {theGraphResult &&
+                        theGraphResult.data &&
+                        theGraphResult.data.postCreateds.map((post, i) => <Post key={i} post={post} />)}
                 </>
             </BBSLayout>
         </>

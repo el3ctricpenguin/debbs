@@ -4,17 +4,17 @@ import { ColorsContext } from "@/config/ColorContext";
 import { useContext } from "react";
 import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
 import * as jdenticon from "jdenticon";
-import { Address } from "viem";
+import { Address, getAddress } from "viem";
 import NextLink from "next/link";
 
 type PostProps = {
-    postId: bigint;
-    parentThreadId: bigint;
-    postOwner: Address;
+    postId: bigint | string;
+    parentThreadId: bigint | string;
+    postOwner: Address | string;
     postContent: string;
-    timestamp: bigint;
+    timestamp: bigint | string;
     isDeleted: boolean;
-    mentionTo: bigint;
+    mentionTo: bigint | string;
 };
 
 export default function Post({ post }: { post: PostProps }) {
@@ -37,7 +37,7 @@ export default function Post({ post }: { post: PostProps }) {
                         label={
                             <Box>
                                 <Text fontWeight={900}>
-                                    &gt; <EnsNameOrAddress address={post.postOwner} shorten />
+                                    &gt; <EnsNameOrAddress address={getAddress(post.postOwner)} shorten />
                                 </Text>
                             </Box>
                             // TODO: create a component here
@@ -51,7 +51,7 @@ export default function Post({ post }: { post: PostProps }) {
                     >
                         <Link as={NextLink} href={`/user/${post.postOwner}`}>
                             <Text>
-                                <EnsNameOrAddress address={post.postOwner} shorten />
+                                <EnsNameOrAddress address={getAddress(post.postOwner)} shorten />
                             </Text>
                         </Link>
                     </Tooltip>

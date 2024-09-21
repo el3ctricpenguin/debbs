@@ -1,15 +1,59 @@
 import { BBSHeading, BBSHeadingTitle } from "@/components/BBSHeading";
 import BBSLayout from "@/components/BBSLayout";
 import { DashboardTable } from "@/components/DashboardTable";
+import { EnsNameOrAddress } from "@/components/EnsNameOrAddress";
 import { getDeBBSAddress } from "@/constants/ContractAddresses";
 import { deBbsAbi } from "@/generated";
+import { theGraphFetcher } from "@/utils/theGraphFetcher";
 import { Box, chakra, Link, Text, Tooltip } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
+import useSWR from "swr";
+import { getAddress } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 
 const primaryColor = "#fff";
 const bgColor = "#335CFF";
+
+const query = `{
+  threadCreateds(first: 3, orderBy: timestamp, orderDirection: desc) {
+    threadId
+    parentBoardId
+    threadOwner
+    threadTitle
+    timestamp
+  }
+  postCreateds(first: 3, orderBy: timestamp, orderDirection: desc) {
+    postId
+    parentThreadId
+    postOwner
+    postContent
+    timestamp
+    isDeleted
+    mentionTo
+  }
+}`;
+
+type theGraphResponse = {
+    data: {
+        postCreateds: {
+            postId: string;
+            parentThreadId: string;
+            postOwner: string;
+            postContent: string;
+            timestamp: string;
+            isDeleted: boolean;
+            mentionTo: string;
+        }[];
+        threadCreateds: {
+            threadId: string;
+            parentBoardId: string;
+            threadOwner: string;
+            threadTitle: string;
+            timestamp: string;
+        }[];
+    };
+};
 
 export default function Home() {
     const { chain } = useAccount();
@@ -20,41 +64,13 @@ export default function Home() {
     });
     console.log("getBoardsResult", getBoardsResult);
 
-    const recentThreadsResult = [
-        {
-            threadId: 0,
-            account: "great-security.eth",
-            threadDescription: "I made a special anti-fraud wallet, Pizza Wallet.",
-        },
-        {
-            threadId: 0,
-            account: "0xd3ef...ad823",
-            threadDescription: "Where can I get WBTC at better price?",
-        },
-        {
-            threadId: 0,
-            account: "house-boy.eth",
-            threadDescription: "I’m crypto bilionaire living with my mom",
-        },
-    ];
+    const { data: theGraphResult } = useSWR<theGraphResponse>(query, theGraphFetcher);
+    console.log(theGraphResult);
+    // console.log("postCreateds", theGraphResult && JSON.stringify(theGraphResult.data.postCreateds));
+    // console.log("threadCreateds", theGraphResult && JSON.stringify(theGraphResult.data.threadCreateds));
 
-    const recentPostsResult = [
-        {
-            postId: 0,
-            account: "sbf.eth",
-            postContent: "I’ll buy as much as ETH has you have...",
-        },
-        {
-            postId: 0,
-            account: "0x92da1...2ed3a",
-            postContent: "Ethereum is so dead!!",
-        },
-        {
-            postId: 0,
-            account: "house-boy.eth",
-            postContent: "I made 200k buying vegetable tokens last year",
-        },
-    ];
+    const recentThreadsResult = theGraphResult && theGraphResult.data.threadCreateds;
+    const recentPostsResult = theGraphResult && theGraphResult.data.postCreateds;
 
     const Hr = chakra("hr");
     return (
@@ -100,28 +116,30 @@ export default function Home() {
                     <Hr borderStyle="dashed" my={2} />
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Threads</BBSHeading>
-                    {recentThreadsResult.map((thread, i) => (
-                        <Text key={i}>
-                            <Link as={NextLink} href={`/user/${thread.account}`}>
-                                [{thread.account}]
-                            </Link>{" "}
-                            <Link as={NextLink} href={`/thread/${thread.threadId}`}>
-                                {thread.threadDescription}
-                            </Link>
-                        </Text>
-                    ))}
+                    {recentThreadsResult &&
+                        recentThreadsResult.map((thread, i) => (
+                            <Text key={i}>
+                                <Link as={NextLink} href={`/user/${thread.threadOwner}`}>
+                                    [<EnsNameOrAddress address={getAddress(thread.threadOwner)} shorten />]
+                                </Link>{" "}
+                                <Link as={NextLink} href={`/thread/${thread.threadId}`}>
+                                    {thread.threadTitle}
+                                </Link>
+                            </Text>
+                        ))}
 
                     <BBSHeading headingProps={{ mt: 6, mb: 2 }}>&gt; Recent Posts</BBSHeading>
-                    {recentPostsResult.map((post, i) => (
-                        <Text key={i}>
-                            <Link as={NextLink} href={`/user/${post.account}`}>
-                                [{post.account}]
-                            </Link>{" "}
-                            <Link as={NextLink} href={`/post/${post.postId}`}>
-                                {post.postContent}
-                            </Link>
-                        </Text>
-                    ))}
+                    {recentPostsResult &&
+                        recentPostsResult.map((post, i) => (
+                            <Text key={i}>
+                                <Link as={NextLink} href={`/user/${post.postOwner}`}>
+                                    [<EnsNameOrAddress address={getAddress(post.postOwner)} shorten />]
+                                </Link>{" "}
+                                <Link as={NextLink} href={`/thread/${post.parentThreadId}`}>
+                                    {post.postContent}
+                                </Link>
+                            </Text>
+                        ))}
                 </>
             </BBSLayout>
         </>
