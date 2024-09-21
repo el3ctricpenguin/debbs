@@ -82,6 +82,7 @@ contract deBBS {
     }
 
     function createThread(uint256 boardId, string memory threadTitle, address frontendOwnerAddress) public payable {
+        require(boardId < boards.length, "The board does not exist.");
         require(msg.value == createThreadFee, "You should pay correct fee to create a thread.");
 
         uint256 threadId = threads.length;
@@ -101,8 +102,10 @@ contract deBBS {
     }
 
     function createPost(uint256 threadId, uint256 mentionTo, string memory postContent, address frontendOwnerAddress) public payable {
+        require(threadId < threads.length, "The thread does not exist.");
+        require(isAddressBanned(threadId, msg.sender) == false, "You are banned from this thread."); 
         require(msg.value == createPostFee, "You should pay correct fee to create a post.");
-
+   
         uint256 postId = posts.length;
 
         require(mentionTo <= postId, "You can't mention future posts.");
@@ -117,13 +120,13 @@ contract deBBS {
             mentionTo: mentionTo
         }));
 
-        if(mentionTo != postId) {
-            emit Mention(postId, mentionTo, msg.sender, posts[mentionTo].postOwner ,postContent, threadId, block.timestamp);
-        }
-
         threadToPosts[threadId].push(postId);
         _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
         emit PostCreated(postId, msg.sender, postContent, threadId, block.timestamp);
+
+        if(mentionTo != postId) {
+            emit Mention(postId, mentionTo, msg.sender, posts[mentionTo].postOwner ,postContent, threadId, block.timestamp);
+        }
     }
 
     function banUser(uint256 threadId, address targetUserToBan) public {
@@ -134,6 +137,7 @@ contract deBBS {
     }
 
     function deletePost(uint256 postId) public {
+        require(postId < posts.length, "The post does not exist.");
 
         address postOwner = posts[postId].postOwner;
 
