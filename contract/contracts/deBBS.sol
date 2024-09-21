@@ -21,6 +21,7 @@ contract deBBS {
         address threadOwner;
         string threadTitle;
         uint256 timestamp;
+        address[] bannedUsers;
     }
 
     struct Post {
@@ -87,7 +88,8 @@ contract deBBS {
             parentBoardId: boardId,
             threadOwner: msg.sender,
             threadTitle: threadTitle,
-            timestamp: block.timestamp
+            timestamp: block.timestamp,
+            bannedUsers: new address[](0)
         }));
 
         boardToThreads[boardId].push(threadId);
@@ -111,6 +113,13 @@ contract deBBS {
         threadToPosts[threadId].push(postId);
         _sendCreatePostFeeToThreadOwnerAndBoardOwner(threadId, frontendOwnerAddress);
         emit PostCreated(postId, msg.sender, postContent, threadId, block.timestamp);
+    }
+
+    function banUser(uint256 threadId, address targetUserToBan) public {
+        require(msg.sender == threads[threadId].threadOwner, "Only the thread owner can ban users.");
+        require(isAddressBanned(threadId, targetUserToBan) == false, "The User is already banned.");
+
+        threads[threadId].bannedUsers.push(targetUserToBan);
     }
 
     function _sendCreateBoardFeeToFrontendOwner(address _frontendOwnerAddress) private {
@@ -233,6 +242,16 @@ contract deBBS {
 
     function getPostsCountByThread(uint threadId) public view returns (uint256) {
         return threadToPosts[threadId].length;
+    }
+
+    function isAddressBanned(uint256 threadId, address userAddress) public view returns (bool) {
+        Thread memory thread = threads[threadId];
+        for (uint256 i = 0; i < thread.bannedUsers.length; i++) {
+            if (thread.bannedUsers[i] == userAddress) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
